@@ -29,7 +29,7 @@ public class TextFinderPublisher extends Publisher {
     private final String regexp;
     private final boolean succeedIfFound;
     
-    private Pattern pattern = null;
+    private transient Pattern pattern = null;
     
     TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound) {
         this.fileSet = fileSet;
@@ -60,10 +60,15 @@ public class TextFinderPublisher extends Publisher {
     public boolean perform(Build build, Launcher launcher, BuildListener listener) {
         // Do we have a pattern?
         if (pattern == null) {
-            listener.getLogger().println("Hudson Text Finder: Unable to compile"
-                    + "regular expression '" + regexp + "'");
-            build.setResult(Result.UNSTABLE);
-            return true;            
+            try {
+                pattern = Pattern.compile(regexp);
+            }
+            catch (PatternSyntaxException e) {
+                listener.getLogger().println("Hudson Text Finder: Unable to compile"
+                        + "regular expression '" + regexp + "'");
+                build.setResult(Result.UNSTABLE);
+                return true;
+            }
         }
         
         return findText(build, listener.getLogger());
