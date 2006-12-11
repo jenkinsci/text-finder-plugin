@@ -71,13 +71,16 @@ public class TextFinderPublisher extends Publisher {
             }
         }
         
-        return findText(build, listener.getLogger());
+        findText(build, listener.getLogger());
+        return true;
     }
                 
-    private boolean findText(Build build, PrintStream logger) {        
+    private void findText(Build build, PrintStream logger) {
         File ws = build.getProject().getWorkspace().getLocal();
+
+        logger.println("Checking " + regexp);
         
-        // Collect list of files for searching        
+        // Collect list of files for searching
         FileSet fs = new FileSet();
         org.apache.tools.ant.Project p = new org.apache.tools.ant.Project();
         fs.setProject(p);
@@ -91,7 +94,7 @@ public class TextFinderPublisher extends Publisher {
             logger.println("Hudson Text Finder: File set '" + 
                     fileSet + "' is empty");
             build.setResult(Result.UNSTABLE);
-            return true;
+            return;
         }
         
         boolean foundText = false;
@@ -133,7 +136,9 @@ public class TextFinderPublisher extends Publisher {
             }
         }
         
-        return (foundText == succeedIfFound);
+        if (foundText != succeedIfFound) {
+            build.setResult(Result.FAILURE);
+        }
     }
     
     public Descriptor<Publisher> getDescriptor() {
