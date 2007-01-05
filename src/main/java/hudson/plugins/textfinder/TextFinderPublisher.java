@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.Serializable;
+
 import org.kohsuke.stapler.StaplerRequest;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.DirectoryScanner;
@@ -26,7 +28,7 @@ import java.util.regex.*;
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
-public class TextFinderPublisher extends Publisher {
+public class TextFinderPublisher extends Publisher implements Serializable {
     
     private final String fileSet;
     private final String regexp;
@@ -155,13 +157,13 @@ public class TextFinderPublisher extends Publisher {
     }
     
     public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
+        return DescriptorImpl.DESCRIPTOR;
     }
     
-    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-    
     public static final class DescriptorImpl extends Descriptor<Publisher> {
-        DescriptorImpl() {
+        public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+        private DescriptorImpl() {
             super(TextFinderPublisher.class);
         }
         
@@ -179,4 +181,6 @@ public class TextFinderPublisher extends Publisher {
                     "on".equals(req.getParameter("textfinder_succeedIfFound")));
         }
     }
+
+    private static final long serialVersionUID = 1L;
 }
