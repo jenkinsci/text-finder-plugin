@@ -68,7 +68,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
     /**
      * Indicates an orderly abortion of the processing.
      */
-    private static final class AbortException extends IOException {
+    private static final class AbortException extends RuntimeException {
     }
 
     private void findText(Build build, PrintStream logger) throws IOException, InterruptedException {
