@@ -11,6 +11,6 @@ import hudson.tasks.BuildStep;
  */
 public class PluginImpl extends Plugin {
     public void start() throws Exception {
-        BuildStep.PUBLISHERS.add(TextFinderPublisher.DescriptorImpl.DESCRIPTOR);
+        BuildStep.PUBLISHERS.addRecorder(TextFinderPublisher.DescriptorImpl.DESCRIPTOR);
     }
 }
