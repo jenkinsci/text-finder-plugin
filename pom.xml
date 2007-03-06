@@ -10,6 +10,10 @@
   
   <artifactId>text-finder</artifactId>
   <packaging>hpi</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <name>Hudson TextFinder plugin</name>
+
+  <scm>
+    <tag>text-finder-1_1</tag>
+  </scm>
 </project>
