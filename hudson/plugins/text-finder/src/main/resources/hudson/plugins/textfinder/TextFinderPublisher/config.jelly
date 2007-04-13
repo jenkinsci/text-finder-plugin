@@ -1,0 +1,37 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="Hudson Text Finder"
+           description="
+           Specify the path to the files in which to search, relative to
+           &lt;a href='ws/'>the workspace root&lt;/a>.
+
+           This can use wildcards like 'logs/**/*/*.txt'.
+           See &lt;a href='http://ant.apache.org/manual/CoreTypes/fileset.html'>
+           the @includes of Ant fileset&lt;/a> for the exact format.
+
+           Leave this empty if you don't want to scan any files (usually combined with
+           checked 'also search the console output'.)
+           ">
+    <input class="setting-input" name="textfinder_fileSet"
+      type="text" value="${instance.fileSet}"/>
+  </f:entry>
+  <f:entry title="">
+    <j:set var="id" value="${h.generateId()}"/>
+    <f:checkbox name="textfinder_alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" id="${id}"/>
+    <label for="${id}">Also search the console output</label>
+  </f:entry>
+
+  <f:entry title="Regular expression"
+           description="
+           Specify a regular expression using the syntax supported by
+           the Java &lt;a href='http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html'>Pattern&lt;a> class.
+           ">
+    <f:textbox name="textfinder_regexp" value="${instance.regexp}"
+        checkUrl="'${rootURL}/publisher/TextFinderPublisher/checkRegexp?value='+encode(this.value)"/>
+  </f:entry>
+
+  <f:entry title="Succeed if found"
+      description="Use this option to force a build to succeed or fail depending on whether 
+      a string was found.">
+    <f:checkbox type="checkbox" name="textfinder_succeedIfFound" checked="${instance.succeedIfFound}"/>
+  </f:entry>
+</j:jelly>
