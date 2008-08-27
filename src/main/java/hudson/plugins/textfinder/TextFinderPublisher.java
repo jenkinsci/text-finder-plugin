@@ -1,4 +1,3 @@
-
 package hudson.plugins.textfinder;
 
 import hudson.FilePath.FileCallable;
@@ -40,6 +39,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
     public final String fileSet;
     public final String regexp;
     public final boolean succeedIfFound;
+    public final boolean unstableIfFound;
     /**
      * True to also scan the whole console output
      */
@@ -48,10 +48,11 @@ public class TextFinderPublisher extends Publisher implements Serializable {
     /**
      * @stapler-constructor
      */
-    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean alsoCheckConsoleOutput) {
+    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
         this.fileSet = Util.fixEmpty(fileSet.trim());
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
+        this.unstableIfFound = unstableIfFound;
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
         
         // Attempt to compile regular expression
@@ -137,7 +138,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
             }
 
             if (foundText != succeedIfFound)
-                build.setResult(Result.FAILURE);
+                build.setResult(unstableIfFound ? Result.UNSTABLE : Result.FAILURE);
         } catch (AbortException e) {
             // no test file found
             build.setResult(Result.UNSTABLE);

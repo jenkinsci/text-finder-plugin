@@ -34,4 +34,9 @@
       a string was found.">
     <f:checkbox type="checkbox" name="textfinder_succeedIfFound" checked="${instance.succeedIfFound}"/>
   </f:entry>
+  
+  <f:entry title="Unstable if found"
+      description="Use this option to set build unstable instead of failing the build.">
+    <f:checkbox type="checkbox" name="textfinder_unstableIfFound" checked="${instance.unstableIfFound}"/>
+  </f:entry>
 </j:jelly>
