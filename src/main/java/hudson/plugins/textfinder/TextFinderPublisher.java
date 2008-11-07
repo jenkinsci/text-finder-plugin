@@ -4,18 +4,21 @@ import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import static hudson.Util.fixEmpty;
-import hudson.util.FormFieldValidator;
-import hudson.model.Build;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
+import hudson.util.FormFieldValidator;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.servlet.ServletException;
 import java.io.BufferedReader;
@@ -45,9 +48,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
      */
     public final boolean alsoCheckConsoleOutput;
 
-    /**
-     * @stapler-constructor
-     */
+    @DataBoundConstructor
     public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
         this.fileSet = Util.fixEmpty(fileSet.trim());
         this.regexp = regexp;
@@ -62,8 +63,8 @@ public class TextFinderPublisher extends Publisher implements Serializable {
             // falls through 
         }
     }
-    
-    public boolean perform(Build build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         findText(build, listener.getLogger());
         return true;
     }
@@ -74,7 +75,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    private void findText(Build build, PrintStream logger) throws IOException, InterruptedException {
+    private void findText(AbstractBuild build, PrintStream logger) throws IOException, InterruptedException {
         try {
             boolean foundText = false;
 
@@ -195,7 +196,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
         return DescriptorImpl.DESCRIPTOR;
     }
     
-    public static final class DescriptorImpl extends Descriptor<Publisher> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
         private DescriptorImpl() {
@@ -208,6 +209,10 @@ public class TextFinderPublisher extends Publisher implements Serializable {
 
         public String getHelpFile() {
             return "/plugin/text-finder/help.html";
+        }
+
+        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+            return true;
         }
 
         /**
@@ -230,10 +235,6 @@ public class TextFinderPublisher extends Publisher implements Serializable {
                     }
                 }
             }.process();
-        }
-
-        public TextFinderPublisher newInstance(StaplerRequest req) throws FormException {
-            return req.bindParameters(TextFinderPublisher.class,"textfinder_");
         }
     }
 

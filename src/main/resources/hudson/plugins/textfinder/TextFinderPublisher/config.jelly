@@ -11,12 +11,11 @@
            Leave this empty if you don't want to scan any files (usually combined with
            checked 'also search the console output'.)
            ">
-    <input class="setting-input" name="textfinder_fileSet"
-      type="text" value="${instance.fileSet}"/>
+    <f:textbox field="fileSet" />
   </f:entry>
   <f:entry title="">
     <j:set var="id" value="${h.generateId()}"/>
-    <f:checkbox name="textfinder_alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" id="${id}"/>
+    <f:checkbox name="textfinder.alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" id="${id}"/>
     <label for="${id}">Also search the console output</label>
   </f:entry>
 
@@ -25,18 +24,17 @@
            Specify a regular expression using the syntax supported by
            the Java &lt;a href='http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html'>Pattern&lt;a> class.
            ">
-    <f:textbox name="textfinder_regexp" value="${instance.regexp}"
-        checkUrl="'${rootURL}/publisher/TextFinderPublisher/checkRegexp?value='+encode(this.value)"/>
+    <f:textbox field="regexp" />
   </f:entry>
 
   <f:entry title="Succeed if found"
       description="Use this option to force a build to succeed or fail depending on whether 
       a string was found.">
-    <f:checkbox type="checkbox" name="textfinder_succeedIfFound" checked="${instance.succeedIfFound}"/>
+    <f:checkbox type="checkbox" name="textfinder.succeedIfFound" checked="${instance.succeedIfFound}"/>
   </f:entry>
   
   <f:entry title="Unstable if found"
       description="Use this option to set build unstable instead of failing the build.">
-    <f:checkbox type="checkbox" name="textfinder_unstableIfFound" checked="${instance.unstableIfFound}"/>
+    <f:checkbox type="checkbox" name="textfinder.unstableIfFound" checked="${instance.unstableIfFound}"/>
   </f:entry>
 </j:jelly>
