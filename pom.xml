@@ -10,7 +10,13 @@
   
   <artifactId>text-finder</artifactId>
   <packaging>hpi</packaging>
-  <version>1.6-SNAPSHOT</version>
+  <version>1.6</version>
   <name>Hudson TextFinder plugin</name>
   <url>http://hudson.gotdns.com/wiki/display/HUDSON/Text-finder+Plugin</url>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/text-finder-1.6</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/text-finder-1.6</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/hudson/plugins/text-finder/tags/text-finder-1.6</url>
+  </scm>
 </project>
