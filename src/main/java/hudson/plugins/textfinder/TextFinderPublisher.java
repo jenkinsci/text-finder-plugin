@@ -3,11 +3,11 @@ package hudson.plugins.textfinder;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.Extension;
 import static hudson.Util.fixEmpty;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
@@ -192,17 +192,8 @@ public class TextFinderPublisher extends Publisher implements Serializable {
         return pattern;
     }
 
-    public Descriptor<Publisher> getDescriptor() {
-        return DescriptorImpl.DESCRIPTOR;
-    }
-    
+    @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
-        private DescriptorImpl() {
-            super(TextFinderPublisher.class);
-        }
-        
         public String getDisplayName() {
             return "Hudson Text Finder";
         }
