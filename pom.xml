@@ -12,5 +12,5 @@
   <packaging>hpi</packaging>
   <version>1.7-SNAPSHOT</version>
   <name>Hudson TextFinder plugin</name>
-  <url>http://hudson.gotdns.com/wiki/display/HUDSON/Text-finder+Plugin</url>
+  <url>http://wiki.hudson-ci.org/display/HUDSON/Text-finder+Plugin</url>
 </project>
