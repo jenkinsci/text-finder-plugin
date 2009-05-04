@@ -13,12 +13,12 @@ import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormFieldValidator;
+import hudson.util.FormValidation;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.servlet.ServletException;
 import java.io.BufferedReader;
@@ -156,10 +156,11 @@ public class TextFinderPublisher extends Publisher implements Serializable {
     private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
         boolean logFilename = true;
         boolean foundText = false;
+        BufferedReader reader=null;
         try {
             // Assume default encoding and text files
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader(f));
+            reader = new BufferedReader(new FileReader(f));
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -176,6 +177,8 @@ public class TextFinderPublisher extends Publisher implements Serializable {
         } catch (IOException e) {
             logger.println("Hudson Text Finder: Error reading" +
                 " file '" + f + "' -- ignoring");
+        } finally {
+            IOUtils.closeQuietly(reader);
         }
         return foundText;
     }
@@ -209,23 +212,17 @@ public class TextFinderPublisher extends Publisher implements Serializable {
         /**
          * Checks the regular expression validity.
          */
-        public void doCheckRegexp(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-            new FormFieldValidator(req,rsp,true) {
-                protected void check() throws IOException, ServletException {
-                    String value = fixEmpty(request.getParameter("value"));
-                    if(value==null) {
-                        ok(); // not entered yet
-                        return;
-                    }
+        public FormValidation doCheckRegexp(@QueryParameter String value) throws IOException, ServletException {
+            value = fixEmpty(value);
+            if(value==null)
+                return FormValidation.ok(); // not entered yet
 
-                    try {
-                        Pattern.compile(value);
-                        ok();
-                    } catch (PatternSyntaxException e) {
-                        error(e.getMessage());
-                    }
-                }
-            }.process();
+            try {
+                Pattern.compile(value);
+                return FormValidation.ok();
+            } catch (PatternSyntaxException e) {
+                return FormValidation.error(e.getMessage());
+            }
         }
     }
 
