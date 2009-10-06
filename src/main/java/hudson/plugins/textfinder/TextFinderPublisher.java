@@ -12,7 +12,9 @@ import hudson.model.Result;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -37,7 +39,7 @@ import java.util.regex.PatternSyntaxException;
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
-public class TextFinderPublisher extends Publisher implements Serializable {
+public class TextFinderPublisher extends Recorder implements Serializable {
     
     public final String fileSet;
     public final String regexp;
@@ -62,6 +64,10 @@ public class TextFinderPublisher extends Publisher implements Serializable {
         } catch (PatternSyntaxException e) {
             // falls through 
         }
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.BUILD;
     }
 
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
@@ -92,7 +98,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if(fileSet!=null) {
-                foundText |= build.getProject().getWorkspace().act(new FileCallable<Boolean>() {
+                foundText |= build.getWorkspace().act(new FileCallable<Boolean>() {
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
                         PrintStream logger = new PrintStream(ros);
 
@@ -201,6 +207,7 @@ public class TextFinderPublisher extends Publisher implements Serializable {
             return "Hudson Text Finder";
         }
 
+        @Override
         public String getHelpFile() {
             return "/plugin/text-finder/help.html";
         }
