@@ -13,4 +13,14 @@
   <version>1.8-SNAPSHOT</version>
   <name>Hudson TextFinder plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Text-finder+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>kohsuke</id>
+      <name>Kohsuke Kawaguchi</name>
+    </developer>
+    <developer>
+      <name>Santiago Pericas-Geertsen</name>
+    </developer>
+  </developers>
 </project>
