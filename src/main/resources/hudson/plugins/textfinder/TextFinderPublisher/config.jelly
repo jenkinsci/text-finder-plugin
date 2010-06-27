@@ -5,7 +5,7 @@
            &lt;a href='ws/'>the workspace root&lt;/a>.
 
            This can use wildcards like 'logs/**/*/*.txt'.
-           See &lt;a href='http://ant.apache.org/manual/CoreTypes/fileset.html'>
+           See &lt;a href='http://ant.apache.org/manual/Types/fileset.html'>
            the @includes of Ant fileset&lt;/a> for the exact format.
 
            Leave this empty if you don't want to scan any files (usually combined with
