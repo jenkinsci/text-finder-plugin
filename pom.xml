@@ -4,15 +4,15 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.319</version>
+    <version>1.377</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
   <artifactId>text-finder</artifactId>
   <packaging>hpi</packaging>
   <version>1.9-SNAPSHOT</version>
-  <name>Hudson TextFinder plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Text-finder+Plugin</url>
+  <name>Jenkins TextFinder plugin</name>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
 
   <developers>
     <developer>

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Text Finder plugin for Hudson. Search in the workspace using a regular 
+ * Text Finder plugin for Jenkins. Search in the workspace using a regular 
  * expression and determine build outcome based on matches. 
  *
  * @author Santiago.PericasGeertsen@sun.com
@@ -113,7 +113,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                         // Any files in the final set?
                         String[] files = ds.getIncludedFiles();
                         if (files.length == 0) {
-                            logger.println("Hudson Text Finder: File set '" +
+                            logger.println("Jenkins Text Finder: File set '" +
                                     fileSet + "' is empty");
                             throw new AbortException();
                         }
@@ -126,12 +126,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                             File f = new File(ws, file);
 
                             if (!f.exists()) {
-                                logger.println("Hudson Text Finder: Unable to" +
+                                logger.println("Jenkins Text Finder: Unable to" +
                                     " find file '" + f + "'");
                                 continue;
                             }
                             if (!f.canRead()) {
-                                logger.println("Hudson Text Finder: Unable to" +
+                                logger.println("Jenkins Text Finder: Unable to" +
                                     " read from file '" + f + "'");
                                 continue;
                             }
@@ -181,7 +181,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                 }
             }
         } catch (IOException e) {
-            logger.println("Hudson Text Finder: Error reading" +
+            logger.println("Jenkins Text Finder: Error reading" +
                 " file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
@@ -194,7 +194,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
         try {
             pattern = Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            logger.println("Hudson Text Finder: Unable to compile"
+            logger.println("Jenkins Text Finder: Unable to compile"
                     + "regular expression '" + regexp + "'");
             throw new AbortException();
         }
@@ -204,7 +204,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public String getDisplayName() {
-            return "Hudson Text Finder";
+            return "Jenkins Text Finder";
         }
 
         @Override
