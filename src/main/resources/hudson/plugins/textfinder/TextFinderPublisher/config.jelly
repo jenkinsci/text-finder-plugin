@@ -14,9 +14,8 @@
     <f:textbox field="fileSet" />
   </f:entry>
   <f:entry title="">
-    <j:set var="id" value="${h.generateId()}"/>
-    <f:checkbox name="textfinder.alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" id="${id}"/>
-    <label for="${id}">Also search the console output</label>
+    <f:checkbox name="textfinder.alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" />
+    <label class="attach-previous">Also search the console output</label>
   </f:entry>
 
   <f:entry title="Regular expression"
