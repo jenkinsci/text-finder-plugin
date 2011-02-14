@@ -10,7 +10,7 @@
   
   <artifactId>text-finder</artifactId>
   <packaging>hpi</packaging>
-  <version>1.9</version>
+  <version>1.10-SNAPSHOT</version>
   <name>Jenkins TextFinder plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
 
@@ -23,10 +23,4 @@
       <name>Santiago Pericas-Geertsen</name>
     </developer>
   </developers>
-
-  <scm>
-    <connection>scm:svn:https://svn.jenkins-ci.org/tags/text-finder-1.9</connection>
-    <developerConnection>scm:svn:https://svn.jenkins-ci.org/tags/text-finder-1.9</developerConnection>
-    <url>http://fisheye.jenkins-ci.org/browse/Hudson/tags/text-finder-1.9</url>
-  </scm>
 </project>
