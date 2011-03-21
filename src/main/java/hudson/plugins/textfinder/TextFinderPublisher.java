@@ -204,7 +204,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public String getDisplayName() {
-            return "Jenkins Text Finder";
+            return Messages.DisplayName();
         }
 
         @Override
