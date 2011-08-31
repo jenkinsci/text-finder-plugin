@@ -1,25 +1,35 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry title="${%Jenkins Text Finder}"
-           description="${%descFileSet}">
-    <f:textbox field="fileSet" />
-  </f:entry>
-  <f:entry title="">
-    <f:checkbox name="textfinder.alsoCheckConsoleOutput" checked="${instance.alsoCheckConsoleOutput}" />
-    <label class="attach-previous">${%Also search the console output}</label>
-  </f:entry>
 
-  <f:entry title="${%Regular expression}"
-           description="${%descRegexp}">
-    <f:textbox field="regexp" />
-  </f:entry>
+    <f:entry title="Text Finders">
+        <f:repeatable name="textFinder" var="param" items="${instance.textFinderParameters}">
+            <f:entry title="${%Description}" description="${%descDescription}">
+                <f:textbox value="${param.description}"/>
+            </f:entry>
+            <f:entry title="${%File path}" description="${%descFileSet}">
+                <f:textbox value="${param.fileSet}"/>
+            </f:entry>
+            <f:entry title="">
+                <f:checkbox name="textfinder.alsoCheckConsoleOutput" checked="${param.alsoCheckConsoleOutput}"/>
+                <label class="attach-previous">${%Also search the console output}</label>
+            </f:entry>
 
-  <f:entry title="${%Succeed if found}"
-      description="${%descSucceedIfFound}">
-    <f:checkbox type="checkbox" name="textfinder.succeedIfFound" checked="${instance.succeedIfFound}"/>
-  </f:entry>
-  
-  <f:entry title="${%Unstable if found}"
-      description="${%descUnstableIfFound}">
-    <f:checkbox type="checkbox" name="textfinder.unstableIfFound" checked="${instance.unstableIfFound}"/>
-  </f:entry>
+            <f:entry title="${%Regular expression}" description="${%descRegexp}">
+                <f:textbox value="${param.regexp}"/>
+            </f:entry>
+
+            <f:entry title="${%Succeed if found}" description="${%descSucceedIfFound}">
+                <f:checkbox type="checkbox" name="textfinder.succeedIfFound" checked="${param.succeedIfFound}"/>
+            </f:entry>
+
+            <f:entry title="${%Unstable if found}" description="${%descUnstableIfFound}">
+                <f:checkbox type="checkbox" name="textfinder.unstableIfFound" checked="${param.unstableIfFound}"/>
+            </f:entry>
+
+            <f:entry title="">
+                <div align="right">
+                    <f:repeatableDeleteButton />
+                </div>
+            </f:entry>
+        </f:repeatable>
+    </f:entry>
 </j:jelly>

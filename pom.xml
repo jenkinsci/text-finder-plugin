@@ -5,7 +5,6 @@
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>1.377</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <artifactId>text-finder</artifactId>
@@ -22,5 +21,10 @@
     <developer>
       <name>Santiago Pericas-Geertsen</name>
     </developer>
+      <developer>
+          <id>gommo</id>
+          <name>Colin Goudie</name>
+          <organization>Tributech</organization>
+      </developer>
   </developers>
 </project>
