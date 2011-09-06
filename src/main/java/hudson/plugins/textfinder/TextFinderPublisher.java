@@ -35,7 +35,6 @@ import java.util.regex.PatternSyntaxException;
 public class TextFinderPublisher extends Recorder implements Serializable {
 
     List<TextFinderParameters> textFinderParameters;
-    //TextFinderParameters textFinderParameter;
 
     @DataBoundConstructor
     public TextFinderPublisher(List<TextFinderParameters> textFinderParameters) {
@@ -64,7 +63,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    private void findText(AbstractBuild build, PrintStream logger, TextFinderParameters parameter) throws IOException, InterruptedException {
+    private void findText(AbstractBuild build, PrintStream logger, final TextFinderParameters parameter) throws IOException, InterruptedException {
 
         final Pattern pattern = compilePattern(logger, parameter.getRegexp());
         final String fileSet = parameter.getFileSet();
@@ -74,7 +73,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
             if (parameter.isAlsoCheckConsoleOutput()) {
                 logger.println("Checking console output");
-                foundText |= checkFile(build.getLogFile(), pattern, logger, true);
+                foundText |= checkFile(build.getLogFile(), pattern, logger, true, parameter.getEncoding());
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
@@ -107,6 +106,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                         boolean foundText = false;
 
                         for (String file : files) {
+                            logger.println("Processing: " + file);
                             File f = new File(ws, file);
 
                             if (!f.exists()) {
@@ -118,7 +118,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                                 continue;
                             }
 
-                            foundText |= checkFile(f, pattern, logger, false);
+                            foundText |= checkFile(f, pattern, logger, false, parameter.getEncoding());
                         }
 
                         return foundText;
@@ -140,30 +140,32 @@ public class TextFinderPublisher extends Recorder implements Serializable {
      * @param abortAfterFirstHit true to return immediately as soon as the first hit is found. this is necessary
      *                           when we are scanning the console output, because otherwise we'll loop forever.
      */
-    private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
+    private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit, String encoding) {
         boolean logFilename = true;
         boolean foundText = false;
         BufferedReader reader = null;
         try {
-            // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new FileReader(f));
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), encoding));
+            } catch (UnsupportedEncodingException e) {
+                logger.println("Error using encoding " + encoding + ". Using UTF-8 as default.");
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+            }
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     if (logFilename) {// first occurrence
-                        logger.println(f + ":");
+                        logger.println(f + ": " + line);
                         logFilename = false;
                     }
-                    logger.println(line);
                     foundText = true;
                     if (abortAfterFirstHit)
                         return true;
                 }
             }
         } catch (IOException e) {
-            logger.println("Jenkins Text Finder: Error reading" +
-                    " file '" + f + "' -- ignoring");
+            logger.println("Jenkins Text Finder: Error reading" + " file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
         }
@@ -183,8 +185,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
-        public String getDisplayName() {
 
+        public DescriptorImpl() {
+            super(TextFinderPublisher.class);
+        }
+
+        public String getDisplayName() {
             return Messages.DisplayName();
         }
 
@@ -219,6 +225,13 @@ public class TextFinderPublisher extends Recorder implements Serializable {
         }
     }
 
+    public List<TextFinderParameters> getTextFinderParameters() {
+        return textFinderParameters;
+    }
+
+    public void setTextFinderParameters(List<TextFinderParameters> textFinderParameters) {
+        this.textFinderParameters = textFinderParameters;
+    }
+
     private static final long serialVersionUID = 1L;
 }
-

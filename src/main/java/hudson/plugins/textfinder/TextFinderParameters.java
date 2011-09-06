@@ -19,15 +19,17 @@ public class TextFinderParameters extends AbstractDescribableImpl<TextFinderPara
     private final boolean succeedIfFound;
     private final boolean unstableIfFound;
     private final boolean alsoCheckConsoleOutput;
+    private final String encoding;
 
     @DataBoundConstructor
-    public TextFinderParameters(String description, String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
+    public TextFinderParameters(String description, String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput, String encoding) {
         this.description = description;
         this.fileSet = Util.fixEmpty(fileSet.trim());
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+        this.encoding = encoding == null ? "UTF-8" : encoding;
     }
 
     @Exported
@@ -60,9 +62,19 @@ public class TextFinderParameters extends AbstractDescribableImpl<TextFinderPara
         return alsoCheckConsoleOutput;
     }
 
+    @Exported
+    public String getEncoding() {
+        return encoding;
+    }
+
     @Extension
     public static class DescriptorImpl extends Descriptor<TextFinderParameters> {
-//        public FormValidation doCheckUrl(@QueryParameter String value) {
+
+        public DescriptorImpl() {
+            super(TextFinderParameters.class);
+        }
+
+        //        public FormValidation doCheckUrl(@QueryParameter String value) {
 //            if (value == null || value.isEmpty()) {
 //                return FormValidation.error("Please enter TextFinder parameters.");
 //            } else {
