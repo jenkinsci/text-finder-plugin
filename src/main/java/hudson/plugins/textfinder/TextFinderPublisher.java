@@ -73,7 +73,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
             if (parameter.isAlsoCheckConsoleOutput()) {
                 logger.println("Checking console output");
-                foundText |= checkFile(build.getLogFile(), pattern, logger, true, parameter.getEncoding());
+                foundText |= checkFile(build.getLogFile(), pattern, logger, true, parameter);
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
@@ -118,7 +118,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                                 continue;
                             }
 
-                            foundText |= checkFile(f, pattern, logger, false, parameter.getEncoding());
+                            foundText |= checkFile(f, pattern, logger, false, parameter);
                         }
 
                         return foundText;
@@ -140,7 +140,8 @@ public class TextFinderPublisher extends Recorder implements Serializable {
      * @param abortAfterFirstHit true to return immediately as soon as the first hit is found. this is necessary
      *                           when we are scanning the console output, because otherwise we'll loop forever.
      */
-    private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit, String encoding) {
+    private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit, TextFinderParameters parameters) {
+        String encoding = parameters.getEncoding();
         boolean logFilename = true;
         boolean foundText = false;
         BufferedReader reader = null;
@@ -152,17 +153,21 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                 logger.println("Error using encoding " + encoding + ". Using UTF-8 as default.");
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
             }
+            int lineNumber = 1;
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     if (logFilename) {// first occurrence
-                        logger.println(f + ": " + line);
+                        logger.println("");
+                        logger.println("Issue found in file: " + f);
                         logFilename = false;
                     }
+                    logger.println(String.format("Line %d: %s. Line is '%s'", lineNumber, parameters.getDescription(), line));
                     foundText = true;
                     if (abortAfterFirstHit)
                         return true;
                 }
+                lineNumber ++;
             }
         } catch (IOException e) {
             logger.println("Jenkins Text Finder: Error reading" + " file '" + f + "' -- ignoring");
