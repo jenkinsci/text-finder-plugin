@@ -5,7 +5,6 @@
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>1.377</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <artifactId>text-finder</artifactId>
@@ -14,7 +13,11 @@
   <name>Jenkins TextFinder plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
 
-  <developers>
+  <properties>
+    <powermock.version>1.4.10</powermock.version>
+  </properties>
+
+    <developers>
     <developer>
       <id>kohsuke</id>
       <name>Kohsuke Kawaguchi</name>
@@ -22,5 +25,41 @@
     <developer>
       <name>Santiago Pericas-Geertsen</name>
     </developer>
+      <developer>
+          <id>gommo</id>
+          <name>Colin Goudie</name>
+          <organization>Tributech</organization>
+      </developer>
+    <developer>
+        <id>hangareighteen</id>
+        <name>Andrew Douglass</name>
+      </developer>
   </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.0-rc1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>${powermock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.9</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
