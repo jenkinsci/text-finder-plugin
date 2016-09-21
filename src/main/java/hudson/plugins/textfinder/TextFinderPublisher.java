@@ -247,6 +247,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
         /**
          * Checks the regular expression validity.
+         * @param value The expression to check
+         * @return The form validation result
          */
         public FormValidation doCheckRegexp(@QueryParameter String value) throws IOException, ServletException {
             value = fixEmpty(value);
