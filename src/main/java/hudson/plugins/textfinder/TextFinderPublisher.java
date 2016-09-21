@@ -19,6 +19,8 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.ServletException;
 import java.io.BufferedReader;
@@ -46,29 +48,47 @@ import javax.annotation.Nonnull;
  */
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
-    public final String fileSet;
-    public final String regexp;
-    public final boolean succeedIfFound;
-    public final boolean unstableIfFound;
+    private String fileSet;
+    private String regexp;
+    private boolean succeedIfFound;
+    private boolean unstableIfFound;
     /**
      * True to also scan the whole console output
      */
-    public final boolean alsoCheckConsoleOutput;
+    private boolean alsoCheckConsoleOutput;
 
     @DataBoundConstructor
-    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
-        this.fileSet = Util.fixEmpty(fileSet.trim());
-        this.regexp = regexp;
-        this.succeedIfFound = succeedIfFound;
-        this.unstableIfFound = unstableIfFound;
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+    public TextFinderPublisher() {
+    }
 
-        // Attempt to compile regular expression
+    @DataBoundSetter
+    public void setFileSet(String fileSet) {
+        this.fileSet = Util.fixEmpty(fileSet.trim());
+    }
+
+    @DataBoundSetter
+    public void setRegexp(String regexp) {
+        this.regexp = regexp;
         try {
             Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
             // falls through
         }
+    }
+
+    @DataBoundSetter
+    public void setSucceedIfFound(boolean succeedIfFound) {
+        this.succeedIfFound = succeedIfFound;
+    }
+
+    @DataBoundSetter
+    public void setUnstableIfFound(boolean unstableIfFound) {
+        this.unstableIfFound = unstableIfFound;
+    }
+
+    @DataBoundSetter
+    public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
+        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -201,7 +221,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     private Pattern compilePattern(PrintStream logger) {
         Pattern pattern;
         try {
-            pattern = Pattern.compile(regexp);
+            pattern = Pattern.compile(this.regexp);
         } catch (PatternSyntaxException e) {
             logger.println("Jenkins Text Finder: Unable to compile"
                     + "regular expression '" + regexp + "'");
