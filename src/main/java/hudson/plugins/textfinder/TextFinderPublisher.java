@@ -1,14 +1,12 @@
 package hudson.plugins.textfinder;
 
 import hudson.FilePath.FileCallable;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.Extension;
 import static hudson.Util.fixEmpty;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -33,14 +31,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import jenkins.model.Jenkins;
+import org.jenkinsci.remoting.RoleChecker;
+import org.jenkinsci.remoting.RoleSensitive;
+import jenkins.tasks.SimpleBuildStep;
+
+import javax.annotation.Nonnull;
+
 /**
- * Text Finder plugin for Jenkins. Search in the workspace using a regular 
- * expression and determine build outcome based on matches. 
+ * Text Finder plugin for Jenkins. Search in the workspace using a regular
+ * expression and determine build outcome based on matches.
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
-public class TextFinderPublisher extends Recorder implements Serializable {
-    
+public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
+
     public final String fileSet;
     public final String regexp;
     public final boolean succeedIfFound;
@@ -57,12 +62,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
-        
+
         // Attempt to compile regular expression
         try {
             Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            // falls through 
+            // falls through
         }
     }
 
@@ -70,9 +75,9 @@ public class TextFinderPublisher extends Recorder implements Serializable {
         return BuildStepMonitor.NONE;
     }
 
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        findText(build, listener.getLogger());
-        return true;
+    @Override
+    public void perform(Run<?, ?> run, FilePath filePath, Launcher launcher, TaskListener taskListener) throws InterruptedException, IOException {
+        findText(run, filePath, taskListener.getLogger());
     }
 
     /**
@@ -81,7 +86,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    private void findText(AbstractBuild build, PrintStream logger) throws IOException, InterruptedException {
+    private void findText(Run<?, ?> build, FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
         try {
             boolean foundText = false;
 
@@ -98,7 +103,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if(fileSet!=null) {
-                foundText |= build.getWorkspace().act(new FileCallable<Boolean>() {
+                foundText |= workspace.act(new FileCallable<Boolean>() {
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
                         PrintStream logger = new PrintStream(ros);
 
@@ -141,6 +146,10 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
                         return foundText;
                     }
+                    @Override
+                    public void checkRoles(RoleChecker rc) throws SecurityException
+                    {
+                    }
                 });
             }
 
@@ -157,7 +166,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
      *
      * @param abortAfterFirstHit
      *      true to return immediately as soon as the first hit is found. this is necessary
-     *      when we are scanning the console output, because otherwise we'll loop forever. 
+     *      when we are scanning the console output, because otherwise we'll loop forever.
      */
     private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
         boolean logFilename = true;
