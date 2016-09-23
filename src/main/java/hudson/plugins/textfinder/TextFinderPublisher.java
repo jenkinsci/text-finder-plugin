@@ -233,7 +233,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public String getDisplayName() {
-            return Messages.DisplayName();
+            return Messages.displayName();
         }
 
         @Override
