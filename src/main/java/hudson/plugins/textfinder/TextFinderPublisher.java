@@ -125,7 +125,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             if(fileSet!=null) {
                 foundText |= workspace.act(new FileCallable<Boolean>() {
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-                        PrintStream logger = new PrintStream(ros);
+                        PrintStream logger = new PrintStream(ros, false, "utf-8");
 
                         // Collect list of files for searching
                         FileSet fs = new FileSet();
