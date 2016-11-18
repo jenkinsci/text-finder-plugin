@@ -1,14 +1,12 @@
 package hudson.plugins.textfinder;
 
 import hudson.FilePath.FileCallable;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.Extension;
 import static hudson.Util.fixEmpty;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -21,6 +19,8 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.commons.io.IOUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.ServletException;
 import java.io.BufferedReader;
@@ -33,46 +33,71 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import jenkins.model.Jenkins;
+import org.jenkinsci.remoting.RoleChecker;
+import org.jenkinsci.remoting.RoleSensitive;
+import jenkins.tasks.SimpleBuildStep;
+
+import javax.annotation.Nonnull;
+
 /**
- * Text Finder plugin for Jenkins. Search in the workspace using a regular 
- * expression and determine build outcome based on matches. 
+ * Text Finder plugin for Jenkins. Search in the workspace using a regular
+ * expression and determine build outcome based on matches.
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
-public class TextFinderPublisher extends Recorder implements Serializable {
-    
-    public final String fileSet;
-    public final String regexp;
-    public final boolean succeedIfFound;
-    public final boolean unstableIfFound;
+public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
+
+    private String fileSet;
+    private String regexp;
+    private boolean succeedIfFound;
+    private boolean unstableIfFound;
     /**
      * True to also scan the whole console output
      */
-    public final boolean alsoCheckConsoleOutput;
+    private boolean alsoCheckConsoleOutput;
 
     @DataBoundConstructor
-    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
+    public TextFinderPublisher() {
+    }
+
+    @DataBoundSetter
+    public void setFileSet(String fileSet) {
         this.fileSet = Util.fixEmpty(fileSet.trim());
+    }
+
+    @DataBoundSetter
+    public void setRegexp(String regexp) {
         this.regexp = regexp;
-        this.succeedIfFound = succeedIfFound;
-        this.unstableIfFound = unstableIfFound;
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
-        
-        // Attempt to compile regular expression
         try {
             Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            // falls through 
+            // falls through
         }
+    }
+
+    @DataBoundSetter
+    public void setSucceedIfFound(boolean succeedIfFound) {
+        this.succeedIfFound = succeedIfFound;
+    }
+
+    @DataBoundSetter
+    public void setUnstableIfFound(boolean unstableIfFound) {
+        this.unstableIfFound = unstableIfFound;
+    }
+
+    @DataBoundSetter
+    public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
+        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
 
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        findText(build, listener.getLogger());
-        return true;
+    @Override
+    public void perform(Run<?, ?> run, FilePath filePath, Launcher launcher, TaskListener taskListener) throws InterruptedException, IOException {
+        findText(run, filePath, taskListener.getLogger());
     }
 
     /**
@@ -81,7 +106,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    private void findText(AbstractBuild build, PrintStream logger) throws IOException, InterruptedException {
+    private void findText(Run<?, ?> build, FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
         try {
             boolean foundText = false;
 
@@ -98,9 +123,9 @@ public class TextFinderPublisher extends Recorder implements Serializable {
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if(fileSet!=null) {
-                foundText |= build.getWorkspace().act(new FileCallable<Boolean>() {
+                foundText |= workspace.act(new FileCallable<Boolean>() {
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-                        PrintStream logger = new PrintStream(ros);
+                        PrintStream logger = new PrintStream(ros, false, "utf-8");
 
                         // Collect list of files for searching
                         FileSet fs = new FileSet();
@@ -141,6 +166,10 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
                         return foundText;
                     }
+                    @Override
+                    public void checkRoles(RoleChecker rc) throws SecurityException
+                    {
+                    }
                 });
             }
 
@@ -157,7 +186,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
      *
      * @param abortAfterFirstHit
      *      true to return immediately as soon as the first hit is found. this is necessary
-     *      when we are scanning the console output, because otherwise we'll loop forever. 
+     *      when we are scanning the console output, because otherwise we'll loop forever.
      */
     private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
         boolean logFilename = true;
@@ -192,7 +221,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private Pattern compilePattern(PrintStream logger) {
         Pattern pattern;
         try {
-            pattern = Pattern.compile(regexp);
+            pattern = Pattern.compile(this.regexp);
         } catch (PatternSyntaxException e) {
             logger.println("Jenkins Text Finder: Unable to compile"
                     + "regular expression '" + regexp + "'");
@@ -204,7 +233,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         public String getDisplayName() {
-            return Messages.DisplayName();
+            return Messages.displayName();
         }
 
         @Override
@@ -218,6 +247,8 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
         /**
          * Checks the regular expression validity.
+         * @param value The expression to check
+         * @return The form validation result
          */
         public FormValidation doCheckRegexp(@QueryParameter String value) throws IOException, ServletException {
             value = fixEmpty(value);
