@@ -1,3 +1,4 @@
+NOT really
 Text-finder Plugin
 ==================
 This plugin lets you search keywords in the files you specified and use that to downgrade a "successful" build to be unstable or a failure.
