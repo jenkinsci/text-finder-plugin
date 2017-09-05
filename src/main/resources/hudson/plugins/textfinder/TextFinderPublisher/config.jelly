@@ -15,4 +15,7 @@
   <f:entry field="unstableIfFound" title="${%Unstable if found}">
     <f:checkbox/>
   </f:entry>
+  <f:entry field="notBuiltIfFound" title="${%Not Built if found}">
+    <f:checkbox/>
+  </f:entry>
 </j:jelly>

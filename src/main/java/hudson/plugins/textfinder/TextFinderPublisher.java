@@ -45,18 +45,20 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     public final String regexp;
     public final boolean succeedIfFound;
     public final boolean unstableIfFound;
+    public final boolean notBuiltIfFound;
     /**
      * True to also scan the whole console output
      */
     public final boolean alsoCheckConsoleOutput;
 
     @DataBoundConstructor
-    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput) {
+    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput, boolean notBuiltIfFound) {
         this.fileSet = Util.fixEmpty(fileSet.trim());
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+        this.notBuiltIfFound = notBuiltIfFound;
         
         // Attempt to compile regular expression
         try {
@@ -144,8 +146,15 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                 });
             }
 
-            if (foundText != succeedIfFound)
-                build.setResult(unstableIfFound ? Result.UNSTABLE : Result.FAILURE);
+            if (foundText != succeedIfFound) {
+                final Result finalResult;
+                if (notBuiltIfFound) {
+                    finalResult = Result.NOT_BUILT;
+                } else {
+                    finalResult = unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                }
+                build.setResult(finalResult);
+            }
         } catch (AbortException e) {
             // no test file found
             build.setResult(Result.UNSTABLE);
