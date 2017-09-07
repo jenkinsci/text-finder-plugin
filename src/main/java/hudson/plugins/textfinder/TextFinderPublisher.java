@@ -1,10 +1,8 @@
 package hudson.plugins.textfinder;
 
+import hudson.Extension;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
-import hudson.Util;
-import hudson.Extension;
-import static hudson.Util.fixEmpty;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -16,9 +14,11 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-import org.apache.commons.io.IOUtils;
+import org.jenkinsci.remoting.RoleChecker;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -29,51 +29,67 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static hudson.Util.fixEmpty;
+
 /**
- * Text Finder plugin for Jenkins. Search in the workspace using a regular 
- * expression and determine build outcome based on matches. 
+ * Text Finder plugin for Jenkins. Search in the workspace using a regular
+ * expression and determine build outcome based on matches.
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
 public class TextFinderPublisher extends Recorder implements Serializable {
-    
+    /* these are kept here just for backward compatibility */
     public final String fileSet;
     public final String regexp;
     public final boolean succeedIfFound;
     public final boolean unstableIfFound;
     public final boolean notBuiltIfFound;
-    /**
-     * True to also scan the whole console output
-     */
     public final boolean alsoCheckConsoleOutput;
 
+
+    private List<TextFinderModel> textFinders;
+
     @DataBoundConstructor
-    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput, boolean notBuiltIfFound) {
-        this.fileSet = Util.fixEmpty(fileSet.trim());
+    public TextFinderPublisher(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound,
+                               boolean alsoCheckConsoleOutput, boolean notBuiltIfFound, List<TextFinderModel>
+                                       textFinders) {
+        this.textFinders = textFinders;
+        this.fileSet = fileSet;
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
         this.notBuiltIfFound = notBuiltIfFound;
-        
-        // Attempt to compile regular expression
+        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+
         try {
             Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            // falls through 
+            // falls through
         }
+    }
+
+    public List<TextFinderModel> getTextFinders() {
+        return textFinders;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
 
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        findText(build, listener.getLogger());
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws
+            InterruptedException, IOException {
+        findText(build, listener.getLogger(), new TextFinderModel(fileSet, regexp, succeedIfFound,
+                unstableIfFound, alsoCheckConsoleOutput, notBuiltIfFound));
+        if (textFinders != null) {
+            for (TextFinderModel textFinder : textFinders) {
+                findText(build, listener.getLogger(), textFinder);
+            }
+        }
         return true;
     }
 
@@ -83,24 +99,31 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    private void findText(AbstractBuild build, PrintStream logger) throws IOException, InterruptedException {
+
+    private void findText(AbstractBuild build, PrintStream logger, final TextFinderModel textFinder) throws IOException,
+            InterruptedException {
         try {
             boolean foundText = false;
 
-            if(alsoCheckConsoleOutput) {
+            if (textFinder.alsoCheckConsoleOutput) {
                 logger.println("Checking console output");
-                foundText |= checkFile(build.getLogFile(), compilePattern(logger), logger, true);
+                foundText |= checkFile(build.getLogFile(), compilePattern(logger, textFinder), logger, true);
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
                 // doing this only when fileSet!=null to avoid
-                logger.println("Checking " + regexp);
+                logger.println("Checking " + textFinder.regexp);
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
-            if(fileSet!=null) {
+            if (textFinder.fileSet != null) {
                 foundText |= build.getWorkspace().act(new FileCallable<Boolean>() {
+                    @Override
+                    public void checkRoles(RoleChecker checker) throws SecurityException {
+
+                    }
+
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
                         PrintStream logger = new PrintStream(ros);
 
@@ -109,18 +132,18 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                         org.apache.tools.ant.Project p = new org.apache.tools.ant.Project();
                         fs.setProject(p);
                         fs.setDir(ws);
-                        fs.setIncludes(fileSet);
+                        fs.setIncludes(textFinder.fileSet);
                         DirectoryScanner ds = fs.getDirectoryScanner(p);
 
                         // Any files in the final set?
                         String[] files = ds.getIncludedFiles();
                         if (files.length == 0) {
                             logger.println("Jenkins Text Finder: File set '" +
-                                    fileSet + "' is empty");
+                                    textFinder.fileSet + "' is empty");
                             throw new AbortException();
                         }
 
-                        Pattern pattern = compilePattern(logger);
+                        Pattern pattern = compilePattern(logger, textFinder);
 
                         boolean foundText = false;
 
@@ -129,12 +152,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
                             if (!f.exists()) {
                                 logger.println("Jenkins Text Finder: Unable to" +
-                                    " find file '" + f + "'");
+                                        " find file '" + f + "'");
                                 continue;
                             }
                             if (!f.canRead()) {
                                 logger.println("Jenkins Text Finder: Unable to" +
-                                    " read from file '" + f + "'");
+                                        " read from file '" + f + "'");
                                 continue;
                             }
 
@@ -146,12 +169,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                 });
             }
 
-            if (foundText != succeedIfFound) {
+            if (foundText != textFinder.succeedIfFound) {
                 final Result finalResult;
-                if (notBuiltIfFound) {
+                if (textFinder.notBuiltIfFound) {
                     finalResult = Result.NOT_BUILT;
                 } else {
-                    finalResult = unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                    finalResult = textFinder.unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
                 }
                 build.setResult(finalResult);
             }
@@ -164,14 +187,13 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     /**
      * Search the given regexp pattern in the file.
      *
-     * @param abortAfterFirstHit
-     *      true to return immediately as soon as the first hit is found. this is necessary
-     *      when we are scanning the console output, because otherwise we'll loop forever. 
+     * @param abortAfterFirstHit true to return immediately as soon as the first hit is found. this is necessary
+     *                           when we are scanning the console output, because otherwise we'll loop forever.
      */
     private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
         boolean logFilename = true;
         boolean foundText = false;
-        BufferedReader reader=null;
+        BufferedReader reader = null;
         try {
             // Assume default encoding and text files
             String line;
@@ -185,26 +207,25 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                     }
                     logger.println(line);
                     foundText = true;
-                    if(abortAfterFirstHit)
-                        return true;
+                    if (abortAfterFirstHit) { return true; }
                 }
             }
         } catch (IOException e) {
             logger.println("Jenkins Text Finder: Error reading" +
-                " file '" + f + "' -- ignoring");
+                    " file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
         }
         return foundText;
     }
 
-    private Pattern compilePattern(PrintStream logger) {
+    private Pattern compilePattern(PrintStream logger, TextFinderModel textFinder) {
         Pattern pattern;
         try {
-            pattern = Pattern.compile(regexp);
+            pattern = Pattern.compile(textFinder.regexp);
         } catch (PatternSyntaxException e) {
             logger.println("Jenkins Text Finder: Unable to compile"
-                    + "regular expression '" + regexp + "'");
+                    + "regular expression '" + textFinder.regexp + "'");
             throw new AbortException();
         }
         return pattern;
@@ -225,13 +246,18 @@ public class TextFinderPublisher extends Recorder implements Serializable {
             return true;
         }
 
+        public List<TextFinderModel.DescriptorImpl> getItemDescriptors() {
+            return Jenkins.getInstance().getDescriptorList(TextFinderModel.class);
+        }
+
         /**
          * Checks the regular expression validity.
          */
         public FormValidation doCheckRegexp(@QueryParameter String value) throws IOException, ServletException {
             value = fixEmpty(value);
-            if(value==null)
+            if (value == null) {
                 return FormValidation.ok(); // not entered yet
+            }
 
             try {
                 Pattern.compile(value);
