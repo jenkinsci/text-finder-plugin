@@ -1,27 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.480</version>
-  </parent>
-  
-  <artifactId>text-finder</artifactId>
-  <packaging>hpi</packaging>
-  <version>1.10.1</version>
-  <name>Jenkins TextFinder plugin</name>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.645</version>
+    </parent>
 
-  <developers>
-    <developer>
-      <id>kohsuke</id>
-      <name>Kohsuke Kawaguchi</name>
-    </developer>
-    <developer>
-      <name>Santiago Pericas-Geertsen</name>
-    </developer>
-  </developers>
+    <artifactId>text-finder</artifactId>
+    <packaging>hpi</packaging>
+    <version>1.10.2</version>
+    <name>Jenkins TextFinder plugin</name>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
+
+    <developers>
+        <developer>
+            <id>kohsuke</id>
+            <name>Kohsuke Kawaguchi</name>
+        </developer>
+        <developer>
+            <name>Santiago Pericas-Geertsen</name>
+        </developer>
+    </developers>
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
@@ -41,6 +54,17 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jenkins-ci.main</groupId>
+            <artifactId>jenkins-war</artifactId>
+            <type>war</type>
+            <version>1.645</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>  
   
 
