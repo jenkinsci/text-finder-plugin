@@ -3,6 +3,7 @@ package hudson.plugins.textfinder;
 import hudson.Extension;
 import hudson.FilePath.FileCallable;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -59,7 +60,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                                boolean alsoCheckConsoleOutput, boolean notBuiltIfFound, List<TextFinderModel>
                                        textFinders) {
         this.textFinders = textFinders;
-        this.fileSet = fileSet;
+        this.fileSet = fileSet != null ? Util.fixEmpty(fileSet.trim()) : null;
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;

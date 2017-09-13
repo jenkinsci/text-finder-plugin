@@ -25,7 +25,7 @@ public final class TextFinderModel extends AbstractDescribableImpl<TextFinderMod
 
     @DataBoundConstructor
     public TextFinderModel(String fileSet, String regexp, boolean succeedIfFound, boolean unstableIfFound, boolean alsoCheckConsoleOutput, boolean notBuiltIfFound) {
-        this.fileSet = Util.fixEmpty(fileSet.trim());
+        this.fileSet = fileSet != null ? Util.fixEmpty(fileSet.trim()) : null;
         this.regexp = regexp;
         this.succeedIfFound = succeedIfFound;
         this.unstableIfFound = unstableIfFound;
