@@ -26,7 +26,7 @@ import jenkins.tasks.SimpleBuildStep;
  * Text Finder plugin for Jenkins. Search in the workspace using a regular 
  * expression and determine build outcome based on matches. 
  *
- * @author Santiago.PericasGeertsen@sun.com
+ * @author Santiago.PericasGeertsen@sun.com, jochen.fuerbacher@1und1.de
  */
 public class TextFinderPipelinePublisher extends TextFinderPublisher implements SimpleBuildStep {
     
@@ -55,22 +55,6 @@ public class TextFinderPipelinePublisher extends TextFinderPublisher implements 
 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
-        }
-
-        /**
-         * Checks the regular expression validity.
-         */
-        public FormValidation doCheckRegexp(@QueryParameter String value) throws IOException, ServletException {
-            value = fixEmpty(value);
-            if(value==null)
-                return FormValidation.ok(); // not entered yet
-
-            try {
-                Pattern.compile(value);
-                return FormValidation.ok();
-            } catch (PatternSyntaxException e) {
-                return FormValidation.error(e.getMessage());
-            }
         }
     }
 
