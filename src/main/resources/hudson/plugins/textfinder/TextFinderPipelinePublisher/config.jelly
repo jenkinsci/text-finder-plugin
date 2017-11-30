@@ -1,0 +1,11 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry field="regexp" title="${%Regular expression}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry field="succeedIfFound" title="${%Succeed if found}">
+    <f:checkbox/>
+  </f:entry>
+  <f:entry field="unstableIfFound" title="${%Unstable if found}">
+    <f:checkbox/>
+  </f:entry>
+</j:jelly>
