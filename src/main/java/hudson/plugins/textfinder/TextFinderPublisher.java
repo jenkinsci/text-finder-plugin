@@ -4,12 +4,13 @@ import hudson.FilePath.FileCallable;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.Extension;
+import hudson.FilePath;
+
 import static hudson.Util.fixEmpty;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
@@ -17,6 +18,8 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import jenkins.tasks.SimpleBuildStep;
+
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +43,7 @@ import java.util.regex.PatternSyntaxException;
  *
  * @author Santiago.PericasGeertsen@sun.com
  */
-public class TextFinderPublisher extends Recorder implements Serializable {
+public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
     
     public final String fileSet;
     public final String regexp;
@@ -70,11 +73,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
-
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        findText(build, listener.getLogger());
-        return true;
-    }
+    
+	@Override
+	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher,
+			TaskListener listener) throws InterruptedException, IOException {
+		findText(run, workspace, listener.getLogger());	
+	}
 
     /**
      * Indicates an orderly abortion of the processing.
@@ -82,7 +86,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private static final class AbortException extends RuntimeException {
     }
 
-    protected void findText(Run<?, ?> run, PrintStream logger) throws IOException, InterruptedException {
+    protected void findText(Run<?, ?> run, FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
         try {
             boolean foundText = false;
 
@@ -98,9 +102,8 @@ public class TextFinderPublisher extends Recorder implements Serializable {
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
-            if(fileSet!=null && run instanceof AbstractBuild<?, ?>) {
-            	AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
-                foundText |= build.getWorkspace().act(new FileCallable<Boolean>() {
+            if(fileSet!=null) {
+                foundText |= workspace.act(new FileCallable<Boolean>() {
                     public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
                         PrintStream logger = new PrintStream(ros);
 
