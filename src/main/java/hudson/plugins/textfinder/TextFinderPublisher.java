@@ -86,7 +86,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     private static final class AbortException extends RuntimeException {
     }
 
-    protected void findText(Run<?, ?> run, FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
+    private void findText(Run<?, ?> run, FilePath workspace, PrintStream logger) throws IOException, InterruptedException {
         try {
             boolean foundText = false;
 
