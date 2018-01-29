@@ -163,10 +163,12 @@ public class TextFinderPublisher extends Recorder implements Serializable {
         boolean logFilename = true;
         boolean foundText = false;
         BufferedReader reader=null;
+        InputStreamReader isr = null;
         try {
             // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new FileReader(f));
+            isr = new InputStreamReader(new FileInputStream(f), "UTF-8");
+            reader = new BufferedReader(isr);
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
