@@ -162,7 +162,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
     private boolean checkFile(File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
         boolean logFilename = true;
         boolean foundText = false;
-        BufferedReader reader=null;
+        BufferedReader reader = null;
         InputStreamReader isr = null;
         try {
             // Assume default encoding and text files
