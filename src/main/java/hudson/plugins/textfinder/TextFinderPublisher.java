@@ -187,6 +187,7 @@ public class TextFinderPublisher extends Recorder implements Serializable {
                 " file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(isr);
         }
         return foundText;
     }
