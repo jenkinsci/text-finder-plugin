@@ -215,7 +215,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         return pattern;
     }
 
-    @Symbol("textFinder")
+    @Symbol("findText")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override

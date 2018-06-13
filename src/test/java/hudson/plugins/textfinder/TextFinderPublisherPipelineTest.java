@@ -46,7 +46,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {textFinder regexp: 'foobar', fileSet: 'out.txt', succeedIfFound: true}\n"));
+                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', succeedIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking foobar", build);
@@ -60,7 +60,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {textFinder regexp: 'foobar', fileSet: 'out.txt'}\n"));
+                                + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking foobar", build);
@@ -74,7 +74,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {textFinder regexp: 'foobar', fileSet: 'out.txt', unstableIfFound: true}\n"));
+                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', unstableIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking foobar", build);
@@ -88,7 +88,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {writeFile file: 'out.txt', text: 'foobaz'}\n"
-                                + "node {textFinder regexp: 'foobar', fileSet: 'out.txt'}\n"));
+                                + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking foobar", build);
@@ -101,7 +101,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {isUnix() ? sh('echo foobar') : bat('echo foobar')}\n"
-                                + "node {textFinder regexp: 'foobar', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
+                                + "node {findText regexp: 'foobar', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
@@ -115,7 +115,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {isUnix() ? sh('echo foobar') : bat('echo foobar')}\n"
-                                + "node {textFinder regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
+                                + "node {findText regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
@@ -129,7 +129,7 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {isUnix() ? sh('echo foobar') : bat('echo foobar')}\n"
-                                + "node {textFinder regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
+                                + "node {findText regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
@@ -142,7 +142,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {textFinder regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
+                        "node {findText regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
