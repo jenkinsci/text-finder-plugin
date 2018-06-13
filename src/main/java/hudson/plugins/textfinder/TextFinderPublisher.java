@@ -9,6 +9,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -153,8 +154,10 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 logger.println("Checking " + regexp);
             }
 
+            final RemoteOutputStream ros = new RemoteOutputStream(logger);
+
             if(fileSet!=null) {
-                foundText |= workspace.act(new FileChecker(listener, fileSet, regexp));
+                foundText |= workspace.act(new FileChecker(ros, fileSet, regexp));
             }
 
             if (foundText != succeedIfFound)
@@ -252,19 +255,19 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
     private static class FileChecker extends MasterToSlaveFileCallable<Boolean> {
 
-        private final TaskListener listener;
+        private final RemoteOutputStream ros;
         private final String fileSet;
         private final String regexp;
 
-        public FileChecker(TaskListener listener, String fileSet, String regexp) {
-            this.listener = listener;
+        public FileChecker(RemoteOutputStream ros, String fileSet, String regexp) {
+            this.ros = ros;
             this.fileSet = fileSet;
             this.regexp = regexp;
         }
 
         @Override
         public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-            PrintStream logger = listener.getLogger();
+            PrintStream logger = new PrintStream(ros);
 
             // Collect list of files for searching
             FileSet fs = new FileSet();
