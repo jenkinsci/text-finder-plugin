@@ -26,7 +26,8 @@ public class TextFinderPublisherAgentTest {
 
     private void assertLogContainsMatch(File file, String text, WorkflowRun build)
             throws IOException {
-        rule.assertLogContains(String.format("%s:\n%s", file, text), build);
+        rule.assertLogContains(
+                String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
     }
 
     private File getWorkspace(WorkflowRun build) {

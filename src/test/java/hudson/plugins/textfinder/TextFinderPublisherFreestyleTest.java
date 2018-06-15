@@ -23,7 +23,8 @@ public class TextFinderPublisherFreestyleTest {
 
     private void assertLogContainsMatch(File file, String text, FreeStyleBuild build)
             throws IOException {
-        rule.assertLogContains(String.format("%s:\n%s", file, text), build);
+        rule.assertLogContains(
+                String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
     }
 
     @Test
