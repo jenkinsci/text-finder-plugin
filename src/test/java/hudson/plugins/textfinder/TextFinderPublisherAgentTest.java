@@ -1,5 +1,6 @@
 package hudson.plugins.textfinder;
 
+import hudson.Functions;
 import hudson.model.Result;
 import hudson.slaves.DumbSlave;
 import java.io.File;
@@ -20,14 +21,21 @@ public class TextFinderPublisherAgentTest {
 
     private static final String UNIQUE_TEXT = "foobar";
     private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
-    private static final String LOG_UNIQUE_TEXT = "+ " + ECHO_UNIQUE_TEXT;
 
     @Rule public JenkinsRule rule = new JenkinsRule();
 
-    private void assertLogContainsMatch(File file, String text, WorkflowRun build)
+    private void assertLogContainsMatch(File file, String text, WorkflowRun build, boolean isShell)
             throws IOException {
+        String prompt;
+        if (isShell) {
+            prompt = Functions.isWindows() ? "> " : "+ ";
+        } else {
+            prompt = "";
+        }
         rule.assertLogContains(
-                String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
+                String.format(
+                        "%s:%s%s%s", file, System.getProperty("line.separator"), prompt, text),
+                build);
     }
 
     private File getWorkspace(WorkflowRun build) {
@@ -55,7 +63,7 @@ public class TextFinderPublisherAgentTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking foobar", build);
-        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build);
+        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
 
@@ -66,13 +74,13 @@ public class TextFinderPublisherAgentTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         String.format(
-                                "node('%s') {isUnix() ? sh('echo foobar') : bat('echo foobar')}\n"
+                                "node('%s') {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
                                         + "node('%s') {findText regexp: 'foobar', alsoCheckConsoleOutput: true}\n",
                                 agent.getNodeName(), agent.getNodeName())));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
-        assertLogContainsMatch(build.getLogFile(), LOG_UNIQUE_TEXT, build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
 }

@@ -17,14 +17,21 @@ public class TextFinderPublisherFreestyleTest {
 
     private static final String UNIQUE_TEXT = "foobar";
     private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
-    private static final String LOG_UNIQUE_TEXT = "+ " + ECHO_UNIQUE_TEXT;
 
     @Rule public JenkinsRule rule = new JenkinsRule();
 
-    private void assertLogContainsMatch(File file, String text, FreeStyleBuild build)
-            throws IOException {
+    private void assertLogContainsMatch(
+            File file, String text, FreeStyleBuild build, boolean isShell) throws IOException {
+        String prompt;
+        if (isShell) {
+            prompt = Functions.isWindows() ? "> " : "+ ";
+        } else {
+            prompt = "";
+        }
         rule.assertLogContains(
-                String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
+                String.format(
+                        "%s:%s%s%s", file, System.getProperty("line.separator"), prompt, text),
+                build);
     }
 
     @Test
@@ -32,7 +39,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile(ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
@@ -42,7 +49,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
-        assertLogContainsMatch(build.getLogFile(), LOG_UNIQUE_TEXT, build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 
@@ -51,7 +58,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile(ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
@@ -60,7 +67,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
-        assertLogContainsMatch(build.getLogFile(), LOG_UNIQUE_TEXT, build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
 
@@ -69,7 +76,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile(ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
@@ -79,7 +86,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
-        assertLogContainsMatch(build.getLogFile(), LOG_UNIQUE_TEXT, build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
