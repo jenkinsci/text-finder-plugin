@@ -24,7 +24,7 @@ public class TextFinderPublisherFreestyleTest {
             File file, String text, FreeStyleBuild build, boolean isShell) throws IOException {
         String prompt;
         if (isShell) {
-            prompt = Functions.isWindows() ? "> " : "+ ";
+            prompt = Functions.isWindows() ? ">" : "+ ";
         } else {
             prompt = "";
         }

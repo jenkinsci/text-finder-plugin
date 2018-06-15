@@ -27,7 +27,7 @@ public class TextFinderPublisherPipelineTest {
             throws IOException {
         String prompt;
         if (isShell) {
-            prompt = Functions.isWindows() ? "> " : "+ ";
+            prompt = Functions.isWindows() ? ">" : "+ ";
         } else {
             prompt = "";
         }
