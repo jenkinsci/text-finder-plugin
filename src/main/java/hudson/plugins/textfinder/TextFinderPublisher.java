@@ -176,7 +176,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 }
             }
         } catch (IOException e) {
-            logger.println("Jenkins Text Finder: Error reading" + " file '" + f + "' -- ignoring");
+            logger.println("Jenkins Text Finder: Error reading file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
         }
