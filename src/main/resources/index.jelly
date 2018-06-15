@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin is used to search for strings in workspace files. The outcome
   of this search can be used to mark the build as normal or failed.
