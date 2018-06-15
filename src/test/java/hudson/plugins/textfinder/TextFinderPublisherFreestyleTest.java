@@ -39,7 +39,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
@@ -58,7 +58,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
@@ -76,7 +76,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleProject project = rule.createFreeStyleProject("freestyle");
         CommandInterpreter command =
                 Functions.isWindows()
-                        ? new BatchFile("prompt $G\\r\\n" + ECHO_UNIQUE_TEXT)
+                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
