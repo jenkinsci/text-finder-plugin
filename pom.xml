@@ -14,7 +14,7 @@
   <name>Jenkins TextFinder plugin</name>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin</url>
   <properties>
-    <jenkins.version>1.650</jenkins.version>
+    <jenkins.version>1.651</jenkins.version>
     <java.level>7</java.level>
   </properties>
 

@@ -29,8 +29,9 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.servlet.ServletException;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -183,7 +184,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         try {
             // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new FileReader(f));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -223,7 +224,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
         @Override
         public String getDisplayName() {
-            return Messages.DisplayName();
+            return Messages.TextFinderPublisher_DisplayName();
         }
 
         @Override
@@ -267,7 +268,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
         @Override
         public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-            PrintStream logger = new PrintStream(ros);
+            PrintStream logger = new PrintStream(ros, false, "UTF-8");
 
             // Collect list of files for searching
             FileSet fs = new FileSet();
