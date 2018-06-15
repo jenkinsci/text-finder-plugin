@@ -81,21 +81,9 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
     }
 
-    public String getRegexp() {
-        return regexp;
-    }
-
-    public String getFileSet() {
-        return fileSet;
-    }
-
     @DataBoundSetter
     public void setFileSet(String fileSet) {
         this.fileSet = Util.fixEmpty(fileSet.trim());
-    }
-
-    public boolean isSucceedIfFound() {
-        return succeedIfFound;
     }
 
     @DataBoundSetter
@@ -103,17 +91,9 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         this.succeedIfFound = succeedIfFound;
     }
 
-    public boolean isUnstableIfFound() {
-        return unstableIfFound;
-    }
-
     @DataBoundSetter
     public void setUnstableIfFound(boolean unstableIfFound) {
         this.unstableIfFound = unstableIfFound;
-    }
-
-    public boolean isAlsoCheckConsoleOutput() {
-        return alsoCheckConsoleOutput;
     }
 
     @DataBoundSetter
