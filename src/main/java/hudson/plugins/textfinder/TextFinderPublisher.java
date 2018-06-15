@@ -127,7 +127,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
                 // doing this only when fileSet!=null to avoid
-                logger.println("Checking " + regexp);
+                logger.println("Checking for " + "'" + regexp + "'" + " in " + build.getLogFile());
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
