@@ -50,6 +50,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     public final String regexp;
     public boolean succeedIfFound;
     public boolean unstableIfFound;
+    public boolean notBuiltIfFound;
     /** True to also scan the whole console output */
     public boolean alsoCheckConsoleOutput;
 
@@ -95,6 +96,11 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     }
 
     @DataBoundSetter
+    public void setNotBuiltIfFound(boolean notBuiltIfFound) {
+        this.notBuiltIfFound = notBuiltIfFound;
+    }
+
+    @DataBoundSetter
     public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
     }
@@ -137,7 +143,13 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             }
 
             if (foundText != succeedIfFound) {
-                run.setResult(unstableIfFound ? Result.UNSTABLE : Result.FAILURE);
+                final Result finalResult;
+                if (notBuiltIfFound) {
+                    finalResult = Result.NOT_BUILT;
+                } else {
+                    finalResult = unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                }
+                run.setResult(finalResult);
             }
         } catch (AbortException e) {
             // no test file found

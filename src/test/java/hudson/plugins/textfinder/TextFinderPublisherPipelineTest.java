@@ -92,6 +92,20 @@ public class TextFinderPublisherPipelineTest {
     }
 
     @Test
+    public void notBuiltIfFoundInFile() throws Exception {
+        WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
+        project.setDefinition(
+                new CpsFlowDefinition(
+                        "node {writeFile file: 'out.txt', text: 'foobar'}\n"
+                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', notBuiltIfFound: true}\n"));
+        WorkflowRun build = project.scheduleBuild2(0).get();
+        rule.waitForCompletion(build);
+        rule.assertLogContains("Checking foobar", build);
+        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
+        rule.assertBuildStatus(Result.NOT_BUILT, build);
+    }
+
+    @Test
     public void notFoundInFile() throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
@@ -144,6 +158,20 @@ public class TextFinderPublisherPipelineTest {
         rule.assertLogContains("Checking console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.UNSTABLE, build);
+    }
+
+    @Test
+    public void notBuiltIfFoundInConsole() throws Exception {
+        WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
+        project.setDefinition(
+                new CpsFlowDefinition(
+                        "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
+                                + "node {findText regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
+        WorkflowRun build = project.scheduleBuild2(0).get();
+        rule.waitForCompletion(build);
+        rule.assertLogContains("Checking console output", build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
+        rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
 
     @Test
