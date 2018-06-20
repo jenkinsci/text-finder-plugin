@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <f:entry field="fileSet" title="${%Files}">
     <f:textbox/>
@@ -13,6 +14,9 @@
     <f:checkbox/>
   </f:entry>
   <f:entry field="unstableIfFound" title="${%Unstable if found}">
+    <f:checkbox/>
+  </f:entry>
+  <f:entry field="notBuiltIfFound" title="${%Not Built if found}">
     <f:checkbox/>
   </f:entry>
 </j:jelly>
