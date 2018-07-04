@@ -62,7 +62,7 @@ public class TextFinderPublisherAgentTest {
                                 agent.getNodeName(), agent.getNodeName())));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
+        rule.assertLogContains("Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the file " + "'" + build.getLogFile() + "'", build);
         assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
@@ -79,7 +79,7 @@ public class TextFinderPublisherAgentTest {
                                 agent.getNodeName(), agent.getNodeName())));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("Looking for pattern " + "'" + ECHO_UNIQUE_TEXT + "'" + " in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }

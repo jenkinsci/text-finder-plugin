@@ -126,14 +126,14 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean foundText = false;
 
             if (alsoCheckConsoleOutput) {
-                logger.println("Checking console output");
+                logger.println("Looking for pattern " + "'" + regexp + "'" + " in the console output");
                 foundText |=
                         checkFile(run.getLogFile(), compilePattern(logger, regexp), logger, true);
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
                 // doing this only when fileSet!=null to avoid
-                logger.println("Checking " + regexp);
+                logger.println("Looking for pattern " + "'" + regexp + "'" + " in the file " + "'" + build.getLogFile() + "'");
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
