@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -128,7 +129,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             if (alsoCheckConsoleOutput) {
                 logger.println("Checking console output");
                 foundText |=
-                        checkFile(run.getLogFile(), compilePattern(logger, regexp), logger, true);
+                        checkFile(
+                                run.getLogFile(),
+                                compilePattern(logger, regexp),
+                                logger,
+                                run.getCharset(),
+                                true);
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
@@ -165,14 +171,18 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
      *     forever.
      */
     private static boolean checkFile(
-            File f, Pattern pattern, PrintStream logger, boolean abortAfterFirstHit) {
+            File f,
+            Pattern pattern,
+            PrintStream logger,
+            Charset charset,
+            boolean abortAfterFirstHit) {
         boolean logFilename = true;
         boolean foundText = false;
         BufferedReader reader = null;
         try {
             // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -263,7 +273,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
         @Override
         public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-            PrintStream logger = new PrintStream(ros, false, "UTF-8");
+            PrintStream logger = new PrintStream(ros, false, Charset.defaultCharset().toString());
 
             // Collect list of files for searching
             FileSet fs = new FileSet();
@@ -296,7 +306,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     continue;
                 }
 
-                foundText |= checkFile(f, pattern, logger, false);
+                foundText |= checkFile(f, pattern, logger, Charset.defaultCharset(), false);
             }
 
             return foundText;
