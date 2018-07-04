@@ -169,10 +169,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         boolean logFilename = true;
         boolean foundText = false;
         BufferedReader reader = null;
+        InputStreamReader isr = null;
         try {
             // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+            isr = new InputStreamReader(new FileInputStream(f), "UTF-8");
+            reader = new BufferedReader(isr);
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
@@ -191,6 +193,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             logger.println("Jenkins Text Finder: Error reading file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(isr);
         }
         return foundText;
     }
