@@ -1,5 +1,8 @@
-Text-finder Plugin
-==================
+# Text Finder Plugin
+
+[![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins/text-finder-plugin/master)](https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/)
+[![Jenkins Plugins](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder)
+
 This plugin lets you search keywords in the files you specified and use that to downgrade a "successful" build to be unstable or a failure.
 
 This is handy when you have some tools in your build chain that don't use the exit code properly.

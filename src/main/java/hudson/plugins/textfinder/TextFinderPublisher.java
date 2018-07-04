@@ -33,6 +33,7 @@ import jenkins.MasterToSlaveFileCallable;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -277,7 +278,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
             // Collect list of files for searching
             FileSet fs = new FileSet();
-            org.apache.tools.ant.Project p = new org.apache.tools.ant.Project();
+            Project p = new Project();
             fs.setProject(p);
             fs.setDir(ws);
             fs.setIncludes(fileSet);
@@ -301,6 +302,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     logger.println("Jenkins Text Finder: Unable to find file '" + f + "'");
                     continue;
                 }
+
                 if (!f.canRead()) {
                     logger.println("Jenkins Text Finder: Unable to read from file '" + f + "'");
                     continue;
