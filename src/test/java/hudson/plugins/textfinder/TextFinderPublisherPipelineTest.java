@@ -58,7 +58,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', fileSet: 'out.txt', succeedIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'", build);
+        rule.assertLogContains(
+                "Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'",
+                build);
         assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
@@ -72,7 +74,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'", build);
+        rule.assertLogContains(
+                "Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'",
+                build);
         assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
@@ -86,7 +90,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', fileSet: 'out.txt', unstableIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'", build);
+        rule.assertLogContains(
+                "Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'",
+                build);
         assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
@@ -114,7 +120,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'", build);
+        rule.assertLogContains(
+                "Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'",
+                build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 
