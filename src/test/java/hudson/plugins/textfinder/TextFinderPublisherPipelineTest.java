@@ -106,7 +106,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', fileSet: 'out.txt', notBuiltIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
+        rule.assertLogContains(
+                "Looking for pattern 'foobar' in the file " + "'" + build.getLogFile() + "'",
+                build);
         assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
