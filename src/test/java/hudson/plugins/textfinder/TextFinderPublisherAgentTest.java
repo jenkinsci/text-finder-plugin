@@ -89,8 +89,7 @@ public class TextFinderPublisherAgentTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output",
-                build);
+                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
