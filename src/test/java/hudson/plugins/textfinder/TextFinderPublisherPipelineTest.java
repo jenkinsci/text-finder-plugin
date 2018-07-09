@@ -179,7 +179,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "node {findText regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("Looking for pattern 'foobar' in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
