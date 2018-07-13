@@ -48,8 +48,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains(
-                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output", build);
+        rule.assertLogContains("Looking for a specific pattern in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
@@ -67,8 +66,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains(
-                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output", build);
+        rule.assertLogContains("Looking for a specific pattern in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
@@ -87,8 +85,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains(
-                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output", build);
+        rule.assertLogContains("Looking for a specific pattern in the console output", build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
@@ -101,8 +98,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains(
-                "Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the console output", build);
+        rule.assertLogContains("Looking for a specific pattern in the console output", build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 }

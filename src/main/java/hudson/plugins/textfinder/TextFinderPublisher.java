@@ -128,8 +128,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean foundText = false;
 
             if (alsoCheckConsoleOutput) {
-                logger.println(
-                        "Looking for pattern " + "'" + regexp + "'" + " in the console output");
+                // Do not mention the pattern we are looking for to avoid false positives
+                logger.println("Looking for a specific pattern in the console output");
                 foundText |=
                         checkFile(
                                 run.getLogFile(),
@@ -137,24 +137,20 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 logger,
                                 run.getCharset(),
                                 true);
-            } else {
-                // printing this when checking console output will cause the plugin
-                // to find this line, which would be pointless.
-                // doing this only when fileSet!=null to avoid
-                logger.println(
-                        "Looking for pattern "
-                                + "'"
-                                + regexp
-                                + "'"
-                                + " in the file "
-                                + "'"
-                                + run.getLogFile()
-                                + "'");
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if (fileSet != null) {
+                logger.println(
+                        "Looking for pattern "
+                                + "'"
+                                + regexp
+                                + "'"
+                                + " in the files at "
+                                + "'"
+                                + fileSet
+                                + "'");
                 foundText |= workspace.act(new FileChecker(ros, fileSet, regexp));
             }
 
