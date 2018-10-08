@@ -48,7 +48,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -71,7 +71,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -95,7 +95,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -113,7 +113,7 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT

@@ -207,7 +207,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -232,7 +232,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -257,7 +257,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -282,7 +282,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
@@ -302,7 +302,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
         rule.assertLogContains(
                 "[TextFinder plugin] Finished looking for pattern '"
                         + UNIQUE_TEXT
