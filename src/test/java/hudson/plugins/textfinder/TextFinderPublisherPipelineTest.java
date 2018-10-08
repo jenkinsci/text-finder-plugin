@@ -68,7 +68,12 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern '" + UNIQUE_TEXT + "' in the files at " + "'" + fileSet + "'",
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
                 build);
         assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.SUCCESS, build);
@@ -92,7 +97,12 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern '" + UNIQUE_TEXT + "' in the files at " + "'" + fileSet + "'",
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
                 build);
         assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.FAILURE, build);
@@ -116,7 +126,12 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern '" + UNIQUE_TEXT + "' in the files at " + "'" + fileSet + "'",
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
                 build);
         assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.UNSTABLE, build);
@@ -140,7 +155,12 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern '" + UNIQUE_TEXT + "' in the files at " + "'" + fileSet + "'",
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
                 build);
         assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
@@ -162,7 +182,12 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "Looking for pattern '" + UNIQUE_TEXT + "' in the files at " + "'" + fileSet + "'",
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
                 build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
@@ -182,7 +207,12 @@ public class TextFinderPublisherPipelineTest {
                                 + "', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for a specific pattern in the console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
@@ -202,7 +232,12 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for a specific pattern in the console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
@@ -222,7 +257,12 @@ public class TextFinderPublisherPipelineTest {
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for a specific pattern in the console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
@@ -242,7 +282,12 @@ public class TextFinderPublisherPipelineTest {
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for a specific pattern in the console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
@@ -257,7 +302,12 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Looking for a specific pattern in the console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...");
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 }

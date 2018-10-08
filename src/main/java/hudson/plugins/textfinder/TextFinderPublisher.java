@@ -129,7 +129,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
             if (alsoCheckConsoleOutput) {
                 // Do not mention the pattern we are looking for to avoid false positives
-                logger.println("Looking for a specific pattern in the console output");
+                logger.println("[TextFinder plugin] Scanning console output...");
                 foundText |=
                         checkFile(
                                 run.getLogFile(),
@@ -137,13 +137,19 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 logger,
                                 run.getCharset(),
                                 true);
+                logger.println(
+                        "[TextFinder plugin] Finished looking for pattern "
+                                + "'"
+                                + regexp
+                                + "'"
+                                + " in the console output");
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if (fileSet != null) {
                 logger.println(
-                        "Looking for pattern "
+                        "[TextFinder plugin] Looking for pattern "
                                 + "'"
                                 + regexp
                                 + "'"
