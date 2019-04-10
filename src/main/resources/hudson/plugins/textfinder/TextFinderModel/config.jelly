@@ -19,12 +19,4 @@
   <f:entry field="notBuiltIfFound" title="${%Not Built if found}">
     <f:checkbox/>
   </f:entry>
-  <f:entry field="textFinders">
-    <f:hetero-list name="textFinders"
-                   hasHeader="true"
-                   descriptors="${descriptor.itemDescriptors}"
-                   items="${instance.textFinders}"
-                   addCaption="Add Text finder"
-                   deleteCaption="Delete Text finder"/>
-  </f:entry>
 </j:jelly>
