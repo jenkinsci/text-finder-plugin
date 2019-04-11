@@ -13,13 +13,13 @@ public final class TextFinderModel extends AbstractDescribableImpl<TextFinderMod
         implements Serializable {
     private static final long serialVersionUID = 7645849785536280615L;
 
-    public final String fileSet;
-    public final String regexp;
-    public final boolean succeedIfFound;
-    public final boolean unstableIfFound;
-    public final boolean notBuiltIfFound;
+    private final String fileSet;
+    private final String regexp;
+    private final boolean succeedIfFound;
+    private final boolean unstableIfFound;
+    private final boolean notBuiltIfFound;
     /** True to also scan the whole console output */
-    public final boolean alsoCheckConsoleOutput;
+    private final boolean alsoCheckConsoleOutput;
 
     @DataBoundConstructor
     public TextFinderModel(

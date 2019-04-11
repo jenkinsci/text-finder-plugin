@@ -51,9 +51,11 @@ import org.kohsuke.stapler.QueryParameter;
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
     /**
-     * All text finders configs stored here. Config before multi finders become first field in this
-     * list.
+     * This is first text finder in configuration. It must be here to keep backward compatibility. *
      */
+    private final TextFinderModel baseTextFinder;
+
+    /** Additional text finders configs stored here. */
     private final List<TextFinderModel> textFinders;
 
     /**
@@ -74,23 +76,25 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean notBuiltIfFound,
             boolean alsoCheckConsoleOutput,
             List<TextFinderModel> textFinders) {
-        this.textFinders = new ArrayList<>();
-        this.textFinders.add(
+        this.baseTextFinder =
                 new TextFinderModel(
                         Util.fixEmpty(fileSet != null ? fileSet.trim() : ""),
                         regexp,
                         succeedIfFound,
                         unstableIfFound,
                         alsoCheckConsoleOutput,
-                        notBuiltIfFound));
+                        notBuiltIfFound);
+
+        this.textFinders = new ArrayList<>();
         if (textFinders != null && !textFinders.isEmpty()) {
             this.textFinders.addAll(textFinders);
         }
 
         // Attempt to compile regular expressions
         try {
+            Pattern.compile(baseTextFinder.getRegexp());
             for (TextFinderModel textFinder : this.textFinders) {
-                Pattern.compile(textFinder.regexp);
+                Pattern.compile(textFinder.getRegexp());
             }
         } catch (PatternSyntaxException e) {
             // falls through
@@ -105,6 +109,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
+        findText(run, workspace, listener, baseTextFinder);
         for (TextFinderModel textFinder : textFinders) {
             findText(run, workspace, listener, textFinder);
         }
@@ -123,12 +128,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             PrintStream logger = listener.getLogger();
             boolean foundText = false;
 
-            if (textFinder.alsoCheckConsoleOutput) {
+            if (textFinder.isAlsoCheckConsoleOutput()) {
                 logger.println("Checking console output");
                 foundText =
                         checkFile(
                                 run.getLogFile(),
-                                compilePattern(logger, textFinder.regexp),
+                                compilePattern(logger, textFinder.getRegexp()),
                                 logger,
                                 run.getCharset(),
                                 true);
@@ -136,22 +141,24 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
                 // doing this only when fileSet!=null to avoid
-                logger.println("Checking " + textFinder.regexp);
+                logger.println("Checking " + textFinder.getRegexp());
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
-            if (textFinder.fileSet != null) {
+            if (textFinder.getFileSet() != null) {
                 foundText |=
-                        workspace.act(new FileChecker(ros, textFinder.fileSet, textFinder.regexp));
+                        workspace.act(
+                                new FileChecker(
+                                        ros, textFinder.getFileSet(), textFinder.getRegexp()));
             }
 
-            if (foundText != textFinder.succeedIfFound) {
+            if (foundText != textFinder.isSucceedIfFound()) {
                 final Result finalResult;
-                if (textFinder.notBuiltIfFound) {
+                if (textFinder.isNotBuiltIfFound()) {
                     finalResult = Result.NOT_BUILT;
                 } else {
-                    finalResult = textFinder.unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                    finalResult = textFinder.isUnstableIfFound() ? Result.UNSTABLE : Result.FAILURE;
                 }
                 run.setResult(finalResult);
             }
@@ -218,7 +225,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     /** cut off first item as it is provided with getters */
     @SuppressWarnings("unused")
     public List<TextFinderModel> getTextFinders() {
-        return textFinders.subList(1, textFinders.size());
+        return textFinders;
     }
 
     // backward compatibility getters below
@@ -226,32 +233,32 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     // get first field from list which is used to store original config values
     @SuppressWarnings("unused")
     public String getFileSet() {
-        return this.textFinders.get(0).fileSet;
+        return this.baseTextFinder.getFileSet();
     }
 
     @SuppressWarnings("unused")
     public String getRegexp() {
-        return this.textFinders.get(0).regexp;
+        return this.baseTextFinder.getRegexp();
     }
 
     @SuppressWarnings("unused")
     public boolean isSucceedIfFound() {
-        return this.textFinders.get(0).succeedIfFound;
+        return this.baseTextFinder.isSucceedIfFound();
     }
 
     @SuppressWarnings("unused")
     public boolean isUnstableIfFound() {
-        return this.textFinders.get(0).unstableIfFound;
+        return this.baseTextFinder.isUnstableIfFound();
     }
 
     @SuppressWarnings("unused")
     public boolean isNotBuiltIfFound() {
-        return this.textFinders.get(0).notBuiltIfFound;
+        return this.baseTextFinder.isNotBuiltIfFound();
     }
 
     @SuppressWarnings("unused")
     public boolean isAlsoCheckConsoleOutput() {
-        return this.textFinders.get(0).alsoCheckConsoleOutput;
+        return this.baseTextFinder.isAlsoCheckConsoleOutput();
     }
     // backward compatibility getters above
 
