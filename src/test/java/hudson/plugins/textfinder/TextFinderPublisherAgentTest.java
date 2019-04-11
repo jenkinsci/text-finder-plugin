@@ -83,4 +83,25 @@ public class TextFinderPublisherAgentTest {
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
+
+    @Test
+    public void lastFinderWins() throws Exception {
+        DumbSlave agent = rule.createOnlineSlave();
+        WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
+        project.setDefinition(
+                new CpsFlowDefinition(
+                        String.format(
+                                "node('%s') {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
+                                        + "node('%s') {findText regexp: 'foobar', alsoCheckConsoleOutput: true, "
+                                        + "textFinders: ["
+                                        + "finder(regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true),"
+                                        + "finder(regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true)"
+                                        + "]}",
+                                agent.getNodeName(), agent.getNodeName())));
+        WorkflowRun build = project.scheduleBuild2(0).get();
+        rule.waitForCompletion(build);
+        rule.assertLogContains("Checking console output", build);
+        assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
+        rule.assertBuildStatus(Result.NOT_BUILT, build);
+    }
 }
