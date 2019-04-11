@@ -1,5 +1,7 @@
 package hudson.plugins.textfinder;
 
+import static hudson.Util.fixEmpty;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -15,18 +17,6 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import jenkins.MasterToSlaveFileCallable;
-import jenkins.model.Jenkins;
-import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.FileSet;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.servlet.ServletException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +30,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import static hudson.Util.fixEmpty;
+import javax.servlet.ServletException;
+import jenkins.MasterToSlaveFileCallable;
+import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.io.IOUtils;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.FileSet;
+import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Text Finder plugin for Jenkins. Search in the workspace using a regular expression and determine
@@ -52,19 +51,19 @@ import static hudson.Util.fixEmpty;
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
     /**
-     * All text finders configs stored here.
-     * Config before multi finders become first field in this list.
+     * All text finders configs stored here. Config before multi finders become first field in this
+     * list.
      */
     private final List<TextFinderModel> textFinders;
 
     /**
-     * @param fileSet                first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param regexp                 first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param succeedIfFound         first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param unstableIfFound        first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param notBuiltIfFound        first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param alsoCheckConsoleOutput first textFinder. Keep it here for backward compatibility with old configuration.
-     * @param textFinders            configuration for additional textFinders
+     * @param fileSet Kept for backward compatibility with old configuration.
+     * @param regexp Kept for backward compatibility with old configuration.
+     * @param succeedIfFound Kept for backward compatibility with old configuration.
+     * @param unstableIfFound Kept for backward compatibility with old configuration.
+     * @param notBuiltIfFound Kept for backward compatibility with old configuration.
+     * @param alsoCheckConsoleOutput Kept for backward compatibility with old configuration.
+     * @param textFinders configuration for additional textFinders
      */
     @DataBoundConstructor
     public TextFinderPublisher(
@@ -76,8 +75,14 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean alsoCheckConsoleOutput,
             List<TextFinderModel> textFinders) {
         this.textFinders = new ArrayList<>();
-        this.textFinders.add(new TextFinderModel(Util.fixEmpty(fileSet.trim()), regexp, succeedIfFound,
-                unstableIfFound, alsoCheckConsoleOutput, notBuiltIfFound));
+        this.textFinders.add(
+                new TextFinderModel(
+                        Util.fixEmpty(fileSet != null ? fileSet.trim() : ""),
+                        regexp,
+                        succeedIfFound,
+                        unstableIfFound,
+                        alsoCheckConsoleOutput,
+                        notBuiltIfFound));
         if (textFinders != null && !textFinders.isEmpty()) {
             this.textFinders.addAll(textFinders);
         }
@@ -108,7 +113,11 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     /** Indicates an orderly abortion of the processing. */
     private static final class AbortException extends RuntimeException {}
 
-    private void findText(Run<?, ?> run, FilePath workspace, TaskListener listener, final TextFinderModel textFinder)
+    private void findText(
+            Run<?, ?> run,
+            FilePath workspace,
+            TaskListener listener,
+            final TextFinderModel textFinder)
             throws IOException, InterruptedException {
         try {
             PrintStream logger = listener.getLogger();
@@ -116,12 +125,13 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
             if (textFinder.alsoCheckConsoleOutput) {
                 logger.println("Checking console output");
-                foundText = checkFile(
-                        run.getLogFile(),
-                        compilePattern(logger, textFinder.regexp),
-                        logger,
-                        run.getCharset(),
-                        true);
+                foundText =
+                        checkFile(
+                                run.getLogFile(),
+                                compilePattern(logger, textFinder.regexp),
+                                logger,
+                                run.getCharset(),
+                                true);
             } else {
                 // printing this when checking console output will cause the plugin
                 // to find this line, which would be pointless.
@@ -132,7 +142,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if (textFinder.fileSet != null) {
-                foundText |= workspace.act(new FileChecker(ros, textFinder.fileSet, textFinder.regexp));
+                foundText |=
+                        workspace.act(new FileChecker(ros, textFinder.fileSet, textFinder.regexp));
             }
 
             if (foundText != textFinder.succeedIfFound) {
