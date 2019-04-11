@@ -274,7 +274,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         }
 
         public List<TextFinderModel.DescriptorImpl> getItemDescriptors() {
-            return Jenkins.getInstance().getDescriptorList(TextFinderModel.class);
+            Jenkins jenkins = Jenkins.getInstance();
+            if (jenkins != null) {
+                return jenkins.getDescriptorList(TextFinderModel.class);
+            } else {
+                throw new NullPointerException("not able to get Jenkins instance");
+            }
         }
 
         /**
