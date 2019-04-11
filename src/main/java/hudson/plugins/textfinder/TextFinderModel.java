@@ -7,6 +7,7 @@ import hudson.model.Descriptor;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class TextFinderModel extends AbstractDescribableImpl<TextFinderModel>
@@ -68,6 +69,7 @@ public final class TextFinderModel extends AbstractDescribableImpl<TextFinderMod
         return alsoCheckConsoleOutput;
     }
 
+    @Symbol("finder")
     @Extension
     public static class DescriptorImpl extends Descriptor<TextFinderModel> {
         @Override
