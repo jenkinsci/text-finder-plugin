@@ -20,6 +20,7 @@ public class TextFinderPublisherPipelineTest {
 
     private static final String UNIQUE_TEXT = "foobar";
     private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
+    private static final String fileSet = "out.txt";
 
     @Rule public JenkinsRule rule = new JenkinsRule();
 
@@ -54,12 +55,27 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', succeedIfFound: true}\n"));
+                        "node {writeFile file: '"
+                                + fileSet
+                                + "', text: '"
+                                + UNIQUE_TEXT
+                                + "'}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', fileSet: '"
+                                + fileSet
+                                + "', succeedIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
-        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
+        rule.assertLogContains(
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
+                build);
+        assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 
@@ -68,12 +84,27 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
+                        "node {writeFile file: '"
+                                + fileSet
+                                + "', text: '"
+                                + UNIQUE_TEXT
+                                + "'}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', fileSet: '"
+                                + fileSet
+                                + "'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
-        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
+        rule.assertLogContains(
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
+                build);
+        assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
 
@@ -82,12 +113,27 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', unstableIfFound: true}\n"));
+                        "node {writeFile file: '"
+                                + fileSet
+                                + "', text: '"
+                                + UNIQUE_TEXT
+                                + "'}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', fileSet: '"
+                                + fileSet
+                                + "', unstableIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
-        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
+        rule.assertLogContains(
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
+                build);
+        assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
@@ -96,12 +142,27 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {writeFile file: 'out.txt', text: 'foobar'}\n"
-                                + "node {findText regexp: 'foobar', fileSet: 'out.txt', notBuiltIfFound: true}\n"));
+                        "node {writeFile file: '"
+                                + fileSet
+                                + "', text: '"
+                                + UNIQUE_TEXT
+                                + "'}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', fileSet: '"
+                                + fileSet
+                                + "', notBuiltIfFound: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
-        assertLogContainsMatch(new File(getWorkspace(build), "out.txt"), UNIQUE_TEXT, build, false);
+        rule.assertLogContains(
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
+                build);
+        assertLogContainsMatch(new File(getWorkspace(build), fileSet), UNIQUE_TEXT, build, false);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
 
@@ -110,11 +171,24 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {writeFile file: 'out.txt', text: 'foobaz'}\n"
-                                + "node {findText regexp: 'foobar', fileSet: 'out.txt'}\n"));
+                        "node {writeFile file: '"
+                                + fileSet
+                                + "', text: 'foobaz'}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', fileSet: '"
+                                + fileSet
+                                + "'}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking foobar", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the files at "
+                        + "'"
+                        + fileSet
+                        + "'",
+                build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 
@@ -123,11 +197,22 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                + "node {findText regexp: 'foobar', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
+                        "node {isUnix() ? sh('"
+                                + ECHO_UNIQUE_TEXT
+                                + "') : bat(\"prompt \\$G\\r\\n"
+                                + ECHO_UNIQUE_TEXT
+                                + "\")}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
@@ -137,11 +222,22 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                + "node {findText regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
+                        "node {isUnix() ? sh('"
+                                + ECHO_UNIQUE_TEXT
+                                + "') : bat(\"prompt \\$G\\r\\n"
+                                + ECHO_UNIQUE_TEXT
+                                + "\")}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.FAILURE, build);
     }
@@ -151,11 +247,22 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                + "node {findText regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
+                        "node {isUnix() ? sh('"
+                                + ECHO_UNIQUE_TEXT
+                                + "') : bat(\"prompt \\$G\\r\\n"
+                                + ECHO_UNIQUE_TEXT
+                                + "\")}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.UNSTABLE, build);
     }
@@ -165,11 +272,22 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                + "node {findText regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
+                        "node {isUnix() ? sh('"
+                                + ECHO_UNIQUE_TEXT
+                                + "') : bat(\"prompt \\$G\\r\\n"
+                                + ECHO_UNIQUE_TEXT
+                                + "\")}\n"
+                                + "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
@@ -179,10 +297,17 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class, "pipeline");
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {findText regexp: 'foobar', alsoCheckConsoleOutput: true}\n"));
+                        "node {findText regexp: '"
+                                + UNIQUE_TEXT
+                                + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains(
+                "[TextFinder plugin] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         rule.assertBuildStatus(Result.SUCCESS, build);
     }
 }
