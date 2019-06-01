@@ -1,7 +1,21 @@
 <div>
   <p>
-    This plugin can be used to search for some text using regular expressions
-    on a set of files. For example, it can be used to search for the string
-    "failure" in a set of log files. 
+    This plugin lets you search for some text using regular expressions in a set
+    of files or the console log. Once a match is found, you can downgrade a
+    successful build to a status of
+    <a href="https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE">unstable</a>,
+    <a href="https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE">failure</a>, or
+    <a href="https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT">not built</a>.
+  </p>
+  <p>
+    For example, you can search for the string <code>failure</code> in a set of
+    log files. If a match is found, you can downgrade the build from success to
+    failure. This is handy when you have some tools in your build chain that
+    don't properly set the exit code.
+  </p>
+  <p>
+    Note that the search is always performed, even on builds which returned a
+    non-zero exit status, but the reclassification only applies to builds which
+    returned an overall exit status of zero.
   </p>
 </div>
