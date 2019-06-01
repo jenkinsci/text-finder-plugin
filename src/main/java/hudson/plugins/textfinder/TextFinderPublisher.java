@@ -129,7 +129,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
             if (alsoCheckConsoleOutput) {
                 // Do not mention the pattern we are looking for to avoid false positives
-                logger.println("[TextFinder plugin] Scanning console output...");
+                logger.println("[Text Finder] Scanning console output...");
                 foundText |=
                         checkFile(
                                 run.getLogFile(),
@@ -138,7 +138,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 run.getCharset(),
                                 true);
                 logger.println(
-                        "[TextFinder plugin] Finished looking for pattern "
+                        "[Text Finder] Finished looking for pattern "
                                 + "'"
                                 + regexp
                                 + "'"
@@ -149,7 +149,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
             if (fileSet != null) {
                 logger.println(
-                        "[TextFinder plugin] Looking for pattern "
+                        "[Text Finder] Looking for pattern "
                                 + "'"
                                 + regexp
                                 + "'"
@@ -210,7 +210,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 }
             }
         } catch (IOException e) {
-            logger.println("Jenkins Text Finder: Error reading file '" + f + "' -- ignoring");
+            logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
         }
@@ -222,8 +222,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         try {
             pattern = Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            logger.println(
-                    "Jenkins Text Finder: Unable to compile regular expression '" + regexp + "'");
+            logger.println("[Text Finder] Unable to compile regular expression '" + regexp + "'");
             throw new AbortException();
         }
         return pattern;
@@ -298,7 +297,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             // Any files in the final set?
             String[] files = ds.getIncludedFiles();
             if (files.length == 0) {
-                logger.println("Jenkins Text Finder: File set '" + fileSet + "' is empty");
+                logger.println("[Text Finder] File set '" + fileSet + "' is empty");
                 throw new AbortException();
             }
 
@@ -310,12 +309,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 File f = new File(ws, file);
 
                 if (!f.exists()) {
-                    logger.println("Jenkins Text Finder: Unable to find file '" + f + "'");
+                    logger.println("[Text Finder] Unable to find file '" + f + "'");
                     continue;
                 }
 
                 if (!f.canRead()) {
-                    logger.println("Jenkins Text Finder: Unable to read from file '" + f + "'");
+                    logger.println("[Text Finder] Unable to read from file '" + f + "'");
                     continue;
                 }
 

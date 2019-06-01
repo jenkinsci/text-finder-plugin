@@ -68,7 +68,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "[TextFinder plugin] Looking for pattern '"
+                "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
@@ -97,7 +97,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "[TextFinder plugin] Looking for pattern '"
+                "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
@@ -126,7 +126,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "[TextFinder plugin] Looking for pattern '"
+                "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
@@ -155,7 +155,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "[TextFinder plugin] Looking for pattern '"
+                "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
@@ -182,7 +182,7 @@ public class TextFinderPublisherPipelineTest {
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains(
-                "[TextFinder plugin] Looking for pattern '"
+                "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
@@ -207,9 +207,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "', succeedIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -232,9 +232,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -257,9 +257,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -282,9 +282,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -302,9 +302,9 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true}\n"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);

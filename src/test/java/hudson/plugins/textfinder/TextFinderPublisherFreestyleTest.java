@@ -48,9 +48,9 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -71,9 +71,9 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -95,9 +95,9 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
@@ -113,9 +113,9 @@ public class TextFinderPublisherFreestyleTest {
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("[TextFinder plugin] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[TextFinder plugin] Finished looking for pattern '"
+                "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
