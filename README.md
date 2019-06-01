@@ -4,15 +4,21 @@
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/text-finder.svg)](https://plugins.jenkins.io/text-finder)
 
-This plugin lets you search keywords in the files you specified and use that to downgrade a "successful" build to be unstable or a failure.
+This plugin lets you search for some text using regular expressions in a set of
+files or the console log. Once a match is found, you can downgrade a successful
+build to a status of
+[unstable](https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE),
+[failure](https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE), or
+[not built](https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT).
 
-This is handy when you have some tools in your build chain that don't use the exit code properly.
+For example, you can search for the string `failure` in a set of log files. If
+a match is found, you can downgrade the build from success to failure. This is
+handy when you have some tools in your build chain that don't properly set the
+exit code.
 
-The search is always performed, even on builds which returned a non-zero exit status, but the reclassification only applies to builds which returned an overall exit status of zero.
+Note that the search is always performed, even on builds which returned a
+non-zero exit status, but the reclassification only applies to builds which
+returned an overall exit status of zero.
 
-
-See the documentation and release notes at [Text-finder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin) on the Jenkins Wiki for more information.
-
-
-
-
+See [the Text Finder Plugin page](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin)
+on the Jenkins wiki for more information.
