@@ -92,11 +92,11 @@ public class TextFinderPublisherAgentTest {
                 new CpsFlowDefinition(
                         String.format(
                                 "node('%s') {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                        + "node('%s') {findText regexp: 'foobar', alsoCheckConsoleOutput: true, "
-                                        + "textFinders: ["
-                                        + "finder(regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true),"
-                                        + "finder(regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true)"
-                                        + "]}",
+                                        + "node('%s') {"
+                                        + "findText regexp: 'foobar', alsoCheckConsoleOutput: true\n"
+                                        + "findText regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
+                                        + "findText regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
+                                        + "}",
                                 agent.getNodeName(), agent.getNodeName())));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);

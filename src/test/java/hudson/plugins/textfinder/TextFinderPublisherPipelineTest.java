@@ -192,11 +192,11 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")}\n"
-                                + "node {findText regexp: 'foobar', alsoCheckConsoleOutput: true, "
-                                + "textFinders: ["
-                                + "finder(regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true),"
-                                + "finder(regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true)"
-                                + "]}"));
+                                + "node {"
+                                + "findText regexp: 'foobar', alsoCheckConsoleOutput: true\n"
+                                + "findText regexp: 'foobar', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
+                                + "findText regexp: 'foobar', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
+                                + "}"));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
         rule.assertLogContains("Checking console output", build);
