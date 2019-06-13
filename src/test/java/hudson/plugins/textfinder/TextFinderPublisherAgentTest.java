@@ -107,7 +107,12 @@ public class TextFinderPublisherAgentTest {
                                 agent.getNodeName(), agent.getNodeName())));
         WorkflowRun build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
-        rule.assertLogContains("Checking console output", build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
+        rule.assertLogContains(
+                "[Text Finder] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
         assertLogContainsMatch(build.getLogFile(), ECHO_UNIQUE_TEXT, build, true);
         rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
