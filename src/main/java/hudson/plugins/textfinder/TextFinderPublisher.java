@@ -129,24 +129,35 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean foundText = false;
 
             if (textFinder.isAlsoCheckConsoleOutput()) {
-                logger.println("Checking console output");
-                foundText =
+                // Do not mention the pattern we are looking for to avoid false positives
+                logger.println("[Text Finder] Scanning console output...");
+                foundText |=
                         checkFile(
                                 run.getLogFile(),
                                 compilePattern(logger, textFinder.getRegexp()),
                                 logger,
                                 run.getCharset(),
                                 true);
-            } else {
-                // printing this when checking console output will cause the plugin
-                // to find this line, which would be pointless.
-                // doing this only when fileSet!=null to avoid
-                logger.println("Checking " + textFinder.getRegexp());
+                logger.println(
+                        "[Text Finder] Finished looking for pattern "
+                                + "'"
+                                + textFinder.getRegexp()
+                                + "'"
+                                + " in the console output");
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
             if (textFinder.getFileSet() != null) {
+                logger.println(
+                        "[Text Finder] Looking for pattern "
+                                + "'"
+                                + textFinder.getRegexp()
+                                + "'"
+                                + " in the files at "
+                                + "'"
+                                + textFinder.getFileSet()
+                                + "'");
                 foundText |=
                         workspace.act(
                                 new FileChecker(
@@ -203,7 +214,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 }
             }
         } catch (IOException e) {
-            logger.println("Jenkins Text Finder: Error reading file '" + f + "' -- ignoring");
+            logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
         } finally {
             IOUtils.closeQuietly(reader);
         }
@@ -215,8 +226,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         try {
             pattern = Pattern.compile(regexp);
         } catch (PatternSyntaxException e) {
-            logger.println(
-                    "Jenkins Text Finder: Unable to compile regular expression '" + regexp + "'");
+            logger.println("[Text Finder] Unable to compile regular expression '" + regexp + "'");
             throw new AbortException();
         }
         return pattern;
@@ -340,7 +350,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             // Any files in the final set?
             String[] files = ds.getIncludedFiles();
             if (files.length == 0) {
-                logger.println("Jenkins Text Finder: File set '" + fileSet + "' is empty");
+                logger.println("[Text Finder] File set '" + fileSet + "' is empty");
                 throw new AbortException();
             }
 
@@ -352,12 +362,12 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 File f = new File(ws, file);
 
                 if (!f.exists()) {
-                    logger.println("Jenkins Text Finder: Unable to find file '" + f + "'");
+                    logger.println("[Text Finder] Unable to find file '" + f + "'");
                     continue;
                 }
 
                 if (!f.canRead()) {
-                    logger.println("Jenkins Text Finder: Unable to read from file '" + f + "'");
+                    logger.println("[Text Finder] Unable to read from file '" + f + "'");
                     continue;
                 }
 
