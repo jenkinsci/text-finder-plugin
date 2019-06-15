@@ -11,7 +11,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 public final class TextFinderModel extends AbstractDescribableImpl<TextFinderModel>
         implements Serializable {
-    private static final long serialVersionUID = 7645849785536280615L;
+    private static final long serialVersionUID = 1L;
 
     private final String fileSet;
     private final String regexp;
