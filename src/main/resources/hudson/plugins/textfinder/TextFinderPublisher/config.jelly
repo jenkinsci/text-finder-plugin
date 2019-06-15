@@ -24,7 +24,7 @@
                    hasHeader="true"
                    descriptors="${descriptor.itemDescriptors}"
                    items="${instance.textFinders}"
-                   addCaption="Add Text finder"
-                   deleteCaption="Delete Text finder"/>
+                   addCaption="Add Text Finder"
+                   deleteCaption="Delete Text Finder"/>
   </f:entry>
 </j:jelly>

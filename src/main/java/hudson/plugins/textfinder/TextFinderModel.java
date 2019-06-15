@@ -72,7 +72,7 @@ public final class TextFinderModel extends AbstractDescribableImpl<TextFinderMod
     public static class DescriptorImpl extends Descriptor<TextFinderModel> {
         @Override
         public String getDisplayName() {
-            return "Text finder";
+            return "Text Finder";
         }
     }
 }
