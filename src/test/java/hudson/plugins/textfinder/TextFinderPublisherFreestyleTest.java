@@ -3,6 +3,7 @@ package hudson.plugins.textfinder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.gargoylesoftware.htmlunit.WebClientUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.Functions;
@@ -14,8 +15,6 @@ import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -144,18 +143,7 @@ public class TextFinderPublisherFreestyleTest {
         page.getAnchorByText("Text Finder").click();
 
         // Wait for the YUI JavaScript to load.
-        Set<String> requiredInputs = new HashSet<>();
-        requiredInputs.add("_.fileSet");
-        requiredInputs.add("_.regexp");
-        requiredInputs.add("_.succeedIfFound");
-        requiredInputs.add("_.unstableIfFound");
-        requiredInputs.add("_.notBuiltIfFound");
-        requiredInputs.add("_.alsoCheckConsoleOutput");
-        for (String requiredInput : requiredInputs) {
-            while (config.getInputsByName(requiredInput).isEmpty()) {
-                Thread.sleep(100);
-            }
-        }
+        WebClientUtil.waitForJSExec(page.getWebClient());
 
         // Configure the Text Finder.
         config.getInputByName("_.fileSet").setValueAttribute("file1");
