@@ -10,7 +10,7 @@
 
     <artifactId>text-finder</artifactId>
     <packaging>hpi</packaging>
-    <version>${revision}${changelist}</version>
+    <version>1.12</version>
     <name>Text Finder</name>
     <url>https://wiki.jenkins.io/display/JENKINS/Text-finder+Plugin</url>
     <properties>
@@ -38,7 +38,7 @@
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>${scmTag}</tag>
+      <tag>text-finder-1.12</tag>
   </scm>
 
     <build>
