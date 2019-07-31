@@ -4,6 +4,7 @@ import static hudson.Util.fixEmpty;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.Functions;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractProject;
@@ -21,8 +22,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
@@ -31,7 +34,6 @@ import java.util.regex.PatternSyntaxException;
 import javax.servlet.ServletException;
 import jenkins.MasterToSlaveFileCallable;
 import jenkins.tasks.SimpleBuildStep;
-import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
@@ -130,13 +132,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             if (alsoCheckConsoleOutput) {
                 // Do not mention the pattern we are looking for to avoid false positives
                 logger.println("[Text Finder] Scanning console output...");
-                foundText |=
-                        checkFile(
-                                run.getLogFile(),
-                                compilePattern(logger, regexp),
-                                logger,
-                                run.getCharset(),
-                                true);
+                foundText |= checkConsole(run, compilePattern(logger, regexp), logger);
                 logger.println(
                         "[Text Finder] Finished looking for pattern "
                                 + "'"
@@ -176,30 +172,31 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     }
 
     /**
-     * Search the given regexp pattern in the file.
+     * Search the given regexp pattern.
      *
      * @param abortAfterFirstHit true to return immediately as soon as the first hit is found. this
      *     is necessary when we are scanning the console output, because otherwise we'll loop
      *     forever.
      */
-    private static boolean checkFile(
-            File f,
+    private static boolean checkPattern(
+            Reader r,
             Pattern pattern,
             PrintStream logger,
-            Charset charset,
-            boolean abortAfterFirstHit) {
+            String header,
+            boolean abortAfterFirstHit)
+            throws IOException {
         boolean logFilename = true;
         boolean foundText = false;
-        BufferedReader reader = null;
-        try {
+        try (BufferedReader reader = new BufferedReader(r)) {
             // Assume default encoding and text files
             String line;
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     if (logFilename) { // first occurrence
-                        logger.println(f + ":");
+                        if (header != null) {
+                            logger.println(header);
+                        }
                         logFilename = false;
                     }
                     logger.println(line);
@@ -209,12 +206,31 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     }
                 }
             }
-        } catch (IOException e) {
-            logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
         return foundText;
+    }
+
+    private static boolean checkConsole(Run<?, ?> build, Pattern pattern, PrintStream logger) {
+        try (Reader r = build.getLogReader()) {
+            return checkPattern(r, pattern, logger, null, true);
+        } catch (IOException e) {
+            logger.println("[Text Finder] Error reading console output -- ignoring");
+            Functions.printStackTrace(e, logger);
+        }
+
+        return false;
+    }
+
+    private static boolean checkFile(File f, Pattern pattern, PrintStream logger, Charset charset) {
+        try (InputStream is = new FileInputStream(f);
+                Reader r = new InputStreamReader(is, charset)) {
+            return checkPattern(r, pattern, logger, f + ":", false);
+        } catch (IOException e) {
+            logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
+            Functions.printStackTrace(e, logger);
+        }
+
+        return false;
     }
 
     private static Pattern compilePattern(PrintStream logger, String regexp) {
@@ -284,7 +300,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
         @Override
         public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-            PrintStream logger = new PrintStream(ros, false, Charset.defaultCharset().toString());
+            PrintStream logger = new PrintStream(ros, true, Charset.defaultCharset().toString());
 
             // Collect list of files for searching
             FileSet fs = new FileSet();
@@ -318,7 +334,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     continue;
                 }
 
-                foundText |= checkFile(f, pattern, logger, Charset.defaultCharset(), false);
+                foundText |= checkFile(f, pattern, logger, Charset.defaultCharset());
             }
 
             return foundText;
