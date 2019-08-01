@@ -13,6 +13,13 @@
     <version>${revision}${changelist}</version>
     <name>Text Finder</name>
     <url>https://wiki.jenkins.io/display/JENKINS/Text-finder+Plugin</url>
+    <licenses>
+     <license>
+       <name>The MIT License (MIT)</name>
+       <url>http://opensource.org/licenses/MIT</url>
+       <distribution>repo</distribution>
+     </license>
+   </licenses>
     <properties>
         <revision>1.13</revision>
         <changelist>-SNAPSHOT</changelist>
