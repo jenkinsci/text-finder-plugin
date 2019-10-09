@@ -13,6 +13,8 @@ import hudson.model.Result;
 import hudson.tasks.BatchFile;
 import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Shell;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -32,9 +34,8 @@ public class TextFinderPublisherFreestyleTest {
                         ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
-        TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
-        textFinder.setSucceedIfFound(true);
-        textFinder.setAlsoCheckConsoleOutput(true);
+        TextFinderPublisher textFinder =
+                new TextFinderPublisher("", UNIQUE_TEXT, true, false, false, true, null);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
@@ -54,8 +55,8 @@ public class TextFinderPublisherFreestyleTest {
                         ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
-        TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
-        textFinder.setAlsoCheckConsoleOutput(true);
+        TextFinderPublisher textFinder =
+                new TextFinderPublisher("", UNIQUE_TEXT, false, false, false, true, null);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
@@ -77,9 +78,8 @@ public class TextFinderPublisherFreestyleTest {
                         ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
                         : new Shell(ECHO_UNIQUE_TEXT);
         project.getBuildersList().add(command);
-        TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
-        textFinder.setUnstableIfFound(true);
-        textFinder.setAlsoCheckConsoleOutput(true);
+        TextFinderPublisher textFinder =
+                new TextFinderPublisher("", UNIQUE_TEXT, false, true, false, true, null);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
@@ -96,8 +96,8 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void notFoundInConsole() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
-        textFinder.setAlsoCheckConsoleOutput(true);
+        TextFinderPublisher textFinder =
+                new TextFinderPublisher("", UNIQUE_TEXT, false, false, false, true, null);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = project.scheduleBuild2(0).get();
         rule.waitForCompletion(build);
@@ -108,6 +108,43 @@ public class TextFinderPublisherFreestyleTest {
                         + "' in the console output",
                 build);
         rule.assertBuildStatus(Result.SUCCESS, build);
+    }
+
+    @Test
+    public void lastFinderWins() throws Exception {
+        FreeStyleProject project = rule.createFreeStyleProject("freestyle");
+        CommandInterpreter command =
+                Functions.isWindows()
+                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
+                        : new Shell(ECHO_UNIQUE_TEXT);
+        project.getBuildersList().add(command);
+
+        List<TextFinderModel> finders = new ArrayList<>();
+        finders.add(new TextFinderModel("", UNIQUE_TEXT, false, true, false, true)); // 2nd
+        finders.add(
+                new TextFinderModel(
+                        "", UNIQUE_TEXT, false, false, false, true)); // 3rd, this one must win
+        TextFinderPublisher textFinder =
+                new TextFinderPublisher(
+                        "",
+                        UNIQUE_TEXT,
+                        false,
+                        true,
+                        false,
+                        true,
+                        finders); // 1st will be finder with args from constructor
+        project.getPublishersList().add(textFinder);
+
+        FreeStyleBuild build = project.scheduleBuild2(0).get();
+        rule.waitForCompletion(build);
+        rule.assertLogContains("[Text Finder] Scanning console output...", build);
+        rule.assertLogContains(
+                "[Text Finder] Finished looking for pattern '"
+                        + UNIQUE_TEXT
+                        + "' in the console output",
+                build);
+        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
+        rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
     @Test
@@ -139,9 +176,9 @@ public class TextFinderPublisherFreestyleTest {
         // Ensure that the Text Finder was configured correctly.
         assertEquals(1, project.getPublishersList().size());
         TextFinderPublisher textFinder = (TextFinderPublisher) project.getPublishersList().get(0);
-        assertEquals("file1", textFinder.fileSet);
-        assertEquals(UNIQUE_TEXT, textFinder.regexp);
-        assertTrue(textFinder.unstableIfFound);
-        assertTrue(textFinder.alsoCheckConsoleOutput);
+        assertEquals("file1", textFinder.getFileSet());
+        assertEquals(UNIQUE_TEXT, textFinder.getRegexp());
+        assertTrue(textFinder.isUnstableIfFound());
+        assertTrue(textFinder.isAlsoCheckConsoleOutput());
     }
 }

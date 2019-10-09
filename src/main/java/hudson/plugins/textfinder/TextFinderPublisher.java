@@ -28,18 +28,20 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.servlet.ServletException;
 import jenkins.MasterToSlaveFileCallable;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
@@ -50,63 +52,53 @@ import org.kohsuke.stapler.QueryParameter;
  */
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
-    public String fileSet;
-    public final String regexp;
-    public boolean succeedIfFound;
-    public boolean unstableIfFound;
-    public boolean notBuiltIfFound;
-    /** True to also scan the whole console output */
-    public boolean alsoCheckConsoleOutput;
+    /** This is the primary text finder in the configuration. */
+    private final TextFinderModel primaryTextFinder;
 
+    /** Additional text finder configurations are stored here. */
+    private final List<TextFinderModel> additionalTextFinders;
+
+    /**
+     * @param fileSet Kept for backward compatibility with old configuration.
+     * @param regexp Kept for backward compatibility with old configuration.
+     * @param succeedIfFound Kept for backward compatibility with old configuration.
+     * @param unstableIfFound Kept for backward compatibility with old configuration.
+     * @param notBuiltIfFound Kept for backward compatibility with old configuration.
+     * @param alsoCheckConsoleOutput Kept for backward compatibility with old configuration.
+     * @param additionalTextFinders configuration for additional textFinders
+     */
     @DataBoundConstructor
-    public TextFinderPublisher(String regexp) {
-        this.regexp = regexp;
-
-        // Attempt to compile regular expression
-        try {
-            Pattern.compile(regexp);
-        } catch (PatternSyntaxException e) {
-            // falls through
-        }
-    }
-
-    @Deprecated
     public TextFinderPublisher(
             String fileSet,
             String regexp,
             boolean succeedIfFound,
             boolean unstableIfFound,
-            boolean alsoCheckConsoleOutput) {
-        this(regexp);
-        this.fileSet = Util.fixEmpty(fileSet.trim());
-        this.succeedIfFound = succeedIfFound;
-        this.unstableIfFound = unstableIfFound;
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
-    }
+            boolean notBuiltIfFound,
+            boolean alsoCheckConsoleOutput,
+            List<TextFinderModel> additionalTextFinders) {
+        this.primaryTextFinder =
+                new TextFinderModel(
+                        Util.fixEmpty(fileSet != null ? fileSet.trim() : ""),
+                        regexp,
+                        succeedIfFound,
+                        unstableIfFound,
+                        alsoCheckConsoleOutput,
+                        notBuiltIfFound);
 
-    @DataBoundSetter
-    public void setFileSet(String fileSet) {
-        this.fileSet = Util.fixEmpty(fileSet.trim());
-    }
+        this.additionalTextFinders = new ArrayList<>();
+        if (additionalTextFinders != null && !additionalTextFinders.isEmpty()) {
+            this.additionalTextFinders.addAll(additionalTextFinders);
+        }
 
-    @DataBoundSetter
-    public void setSucceedIfFound(boolean succeedIfFound) {
-        this.succeedIfFound = succeedIfFound;
-    }
-
-    @DataBoundSetter
-    public void setUnstableIfFound(boolean unstableIfFound) {
-        this.unstableIfFound = unstableIfFound;
-    }
-
-    @DataBoundSetter
-    public void setNotBuiltIfFound(boolean notBuiltIfFound) {
-        this.notBuiltIfFound = notBuiltIfFound;
-    }
-
-    @DataBoundSetter
-    public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+        // Attempt to compile regular expressions
+        try {
+            Pattern.compile(primaryTextFinder.getRegexp());
+            for (TextFinderModel textFinder : this.additionalTextFinders) {
+                Pattern.compile(textFinder.getRegexp());
+            }
+        } catch (PatternSyntaxException e) {
+            // falls through
+        }
     }
 
     @Override
@@ -117,51 +109,59 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
             throws InterruptedException, IOException {
-        findText(run, workspace, listener);
+        findText(primaryTextFinder, run, workspace, listener);
+        for (TextFinderModel additionalTextFinder : additionalTextFinders) {
+            findText(additionalTextFinder, run, workspace, listener);
+        }
     }
 
     /** Indicates an orderly abortion of the processing. */
     private static final class AbortException extends RuntimeException {}
 
-    private void findText(Run<?, ?> run, FilePath workspace, TaskListener listener)
+    private void findText(
+            TextFinderModel textFinder, Run<?, ?> run, FilePath workspace, TaskListener listener)
             throws IOException, InterruptedException {
         try {
             PrintStream logger = listener.getLogger();
             boolean foundText = false;
 
-            if (alsoCheckConsoleOutput) {
+            if (textFinder.isAlsoCheckConsoleOutput()) {
                 // Do not mention the pattern we are looking for to avoid false positives
                 logger.println("[Text Finder] Scanning console output...");
-                foundText |= checkConsole(run, compilePattern(logger, regexp), logger);
+                foundText |=
+                        checkConsole(run, compilePattern(logger, textFinder.getRegexp()), logger);
                 logger.println(
                         "[Text Finder] Finished looking for pattern "
                                 + "'"
-                                + regexp
+                                + textFinder.getRegexp()
                                 + "'"
                                 + " in the console output");
             }
 
             final RemoteOutputStream ros = new RemoteOutputStream(logger);
 
-            if (fileSet != null) {
+            if (textFinder.getFileSet() != null) {
                 logger.println(
                         "[Text Finder] Looking for pattern "
                                 + "'"
-                                + regexp
+                                + textFinder.getRegexp()
                                 + "'"
                                 + " in the files at "
                                 + "'"
-                                + fileSet
+                                + textFinder.getFileSet()
                                 + "'");
-                foundText |= workspace.act(new FileChecker(ros, fileSet, regexp));
+                foundText |=
+                        workspace.act(
+                                new FileChecker(
+                                        ros, textFinder.getFileSet(), textFinder.getRegexp()));
             }
 
-            if (foundText != succeedIfFound) {
+            if (foundText != textFinder.isSucceedIfFound()) {
                 final Result finalResult;
-                if (notBuiltIfFound) {
+                if (textFinder.isNotBuiltIfFound()) {
                     finalResult = Result.NOT_BUILT;
                 } else {
-                    finalResult = unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                    finalResult = textFinder.isUnstableIfFound() ? Result.UNSTABLE : Result.FAILURE;
                 }
                 run.setResult(finalResult);
             }
@@ -229,7 +229,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
             Functions.printStackTrace(e, logger);
         }
-
         return false;
     }
 
@@ -242,6 +241,41 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             throw new AbortException();
         }
         return pattern;
+    }
+
+    @SuppressWarnings("unused")
+    public List<TextFinderModel> getAdditionalTextFinders() {
+        return additionalTextFinders;
+    }
+
+    @SuppressWarnings("unused")
+    public String getFileSet() {
+        return this.primaryTextFinder.getFileSet();
+    }
+
+    @SuppressWarnings("unused")
+    public String getRegexp() {
+        return this.primaryTextFinder.getRegexp();
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isSucceedIfFound() {
+        return this.primaryTextFinder.isSucceedIfFound();
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isUnstableIfFound() {
+        return this.primaryTextFinder.isUnstableIfFound();
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isNotBuiltIfFound() {
+        return this.primaryTextFinder.isNotBuiltIfFound();
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isAlsoCheckConsoleOutput() {
+        return this.primaryTextFinder.isAlsoCheckConsoleOutput();
     }
 
     @Symbol("findText")
@@ -260,6 +294,15 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
+        }
+
+        public List<TextFinderModel.DescriptorImpl> getItemDescriptors() {
+            Jenkins jenkins = Jenkins.getInstance();
+            if (jenkins != null) {
+                return jenkins.getDescriptorList(TextFinderModel.class);
+            } else {
+                throw new NullPointerException("not able to get Jenkins instance");
+            }
         }
 
         /**
