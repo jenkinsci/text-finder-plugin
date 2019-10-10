@@ -8,21 +8,66 @@ import java.io.Serializable;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 public final class TextFinderModel extends AbstractDescribableImpl<TextFinderModel>
         implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String fileSet;
+    private String fileSet;
     private final String regexp;
-    private final boolean succeedIfFound;
-    private final boolean unstableIfFound;
-    private final boolean notBuiltIfFound;
+    private boolean succeedIfFound;
+    private boolean unstableIfFound;
+    private boolean notBuiltIfFound;
     /** True to also scan the whole console output */
-    private final boolean alsoCheckConsoleOutput;
+    private boolean alsoCheckConsoleOutput;
 
     @DataBoundConstructor
-    public TextFinderModel(
+    public TextFinderModel(String regexp) {
+        this.regexp = regexp;
+        // Attempt to compile regular expression
+        try {
+            Pattern.compile(regexp);
+        } catch (PatternSyntaxException e) {
+            // falls through
+        }
+    }
+
+    @DataBoundSetter
+    public void setFileSet(String fileSet) {
+        if (fileSet == null) {
+            this.fileSet = null;
+        } else {
+            if (fileSet.trim().isEmpty()) {
+                this.fileSet = null;
+            } else {
+                this.fileSet = fileSet.trim();
+            }
+        }
+    }
+
+    @DataBoundSetter
+    public void setSucceedIfFound(boolean succeedIfFound) {
+        this.succeedIfFound = succeedIfFound;
+    }
+
+    @DataBoundSetter
+    public void setUnstableIfFound(boolean unstableIfFound) {
+        this.unstableIfFound = unstableIfFound;
+    }
+
+    @DataBoundSetter
+    public void setNotBuiltIfFound(boolean notBuiltIfFound) {
+        this.notBuiltIfFound = notBuiltIfFound;
+    }
+
+    @DataBoundSetter
+    public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
+        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+    }
+
+    @Deprecated
+    private TextFinderModel(
             String fileSet,
             String regexp,
             boolean succeedIfFound,

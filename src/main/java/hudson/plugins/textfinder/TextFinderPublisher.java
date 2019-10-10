@@ -42,6 +42,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
@@ -56,7 +57,18 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     private final TextFinderModel primaryTextFinder;
 
     /** Additional text finder configurations are stored here. */
-    private final List<TextFinderModel> additionalTextFinders;
+    private final List<TextFinderModel> additionalTextFinders = new ArrayList<>();;
+
+    @DataBoundConstructor
+    public TextFinderPublisher(String regexp) {
+        this.primaryTextFinder = new TextFinderModel(regexp);
+        // Attempt to compile regular expression
+        try {
+            Pattern.compile(regexp);
+        } catch (PatternSyntaxException e) {
+            // falls through
+        }
+    }
 
     /**
      * @param fileSet Kept for backward compatibility with old configuration.
@@ -67,8 +79,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
      * @param alsoCheckConsoleOutput Kept for backward compatibility with old configuration.
      * @param additionalTextFinders configuration for additional textFinders
      */
-    @DataBoundConstructor
-    public TextFinderPublisher(
+    @Deprecated
+    private TextFinderPublisher(
             String fileSet,
             String regexp,
             boolean succeedIfFound,
@@ -76,28 +88,45 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean notBuiltIfFound,
             boolean alsoCheckConsoleOutput,
             List<TextFinderModel> additionalTextFinders) {
-        this.primaryTextFinder =
-                new TextFinderModel(
-                        Util.fixEmpty(fileSet != null ? fileSet.trim() : ""),
-                        regexp,
-                        succeedIfFound,
-                        unstableIfFound,
-                        alsoCheckConsoleOutput,
-                        notBuiltIfFound);
+        this.primaryTextFinder = new TextFinderModel(regexp);
+        this.primaryTextFinder.setFileSet(Util.fixEmpty(fileSet != null ? fileSet.trim() : ""));
+        this.primaryTextFinder.setSucceedIfFound(succeedIfFound);
+        this.primaryTextFinder.setUnstableIfFound(unstableIfFound);
+        this.primaryTextFinder.setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
+        this.primaryTextFinder.setNotBuiltIfFound(notBuiltIfFound);
+        this.setAdditionalTextFinders(additionalTextFinders);
+    }
 
-        this.additionalTextFinders = new ArrayList<>();
+    @DataBoundSetter
+    public void setFileSet(String fileSet) {
+        this.primaryTextFinder.setFileSet(fileSet);
+    }
+
+    @DataBoundSetter
+    public void setSucceedIfFound(boolean succeedIfFound) {
+        this.primaryTextFinder.setSucceedIfFound(succeedIfFound);
+    }
+
+    @DataBoundSetter
+    public void setUnstableIfFound(boolean unstableIfFound) {
+        this.primaryTextFinder.setUnstableIfFound(unstableIfFound);
+    }
+
+    @DataBoundSetter
+    public void setNotBuiltIfFound(boolean notBuiltIfFound) {
+        this.primaryTextFinder.setNotBuiltIfFound(notBuiltIfFound);
+    }
+
+    @DataBoundSetter
+    public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
+        this.primaryTextFinder.setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
+    }
+
+    @DataBoundSetter
+    public void setAdditionalTextFinders(List<TextFinderModel> additionalTextFinders) {
+        this.additionalTextFinders.clear();
         if (additionalTextFinders != null && !additionalTextFinders.isEmpty()) {
             this.additionalTextFinders.addAll(additionalTextFinders);
-        }
-
-        // Attempt to compile regular expressions
-        try {
-            Pattern.compile(primaryTextFinder.getRegexp());
-            for (TextFinderModel textFinder : this.additionalTextFinders) {
-                Pattern.compile(textFinder.getRegexp());
-            }
-        } catch (PatternSyntaxException e) {
-            // falls through
         }
     }
 
@@ -166,7 +195,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                 run.setResult(finalResult);
             }
         } catch (AbortException e) {
-            // no test file found
+            // files presented, but no test file found.
             run.setResult(Result.UNSTABLE);
         }
     }
@@ -229,6 +258,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             logger.println("[Text Finder] Error reading file '" + f + "' -- ignoring");
             Functions.printStackTrace(e, logger);
         }
+
         return false;
     }
 
