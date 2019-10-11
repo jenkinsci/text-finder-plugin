@@ -1,10 +1,14 @@
 package hudson.plugins.textfinder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.gargoylesoftware.htmlunit.WebClientUtil;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.Functions;
 import hudson.model.FreeStyleBuild;
@@ -183,5 +187,78 @@ public class TextFinderPublisherFreestyleTest {
         assertEquals(UNIQUE_TEXT, textFinder.getRegexp());
         assertTrue(textFinder.isUnstableIfFound());
         assertTrue(textFinder.isAlsoCheckConsoleOutput());
+    }
+
+    @Test
+    public void createMultipleTextFindersViaWebClient() throws Exception {
+        FreeStyleProject project = rule.createFreeStyleProject();
+        assertEquals(0, project.getPublishersList().size());
+
+        // Go to the "Configure" page.
+        JenkinsRule.WebClient webClient = rule.createWebClient();
+        HtmlPage page = webClient.goTo(project.getUrl() + "/configure");
+
+        // Add a Text Finder.
+        HtmlForm config = page.getFormByName("config");
+        rule.getButtonByCaption(config, "Add post-build action").click();
+        HtmlAnchor a1 = page.getAnchorByText("Text Finder");
+        a1.click();
+
+        // Wait for the YUI JavaScript to load.
+        WebClientUtil.waitForJSExec(page.getWebClient());
+
+        // Configure the Text Finder.
+        HtmlInput i0 = config.getInputByName("_.fileSet");
+        i0.setValueAttribute("file1");
+        HtmlInput i1 = config.getInputByName("_.regexp");
+        i1.setValueAttribute(UNIQUE_TEXT);
+        HtmlInput i2 = config.getInputByName("_.unstableIfFound");
+        i2.click();
+        HtmlInput i3 = config.getInputByName("_.alsoCheckConsoleOutput");
+        i3.click();
+        // add another Text Finder
+        List<HtmlAnchor> al1 = page.getAnchors();
+        rule.getButtonByCaption(config, "Add additional Text Finder").click();
+        List<HtmlAnchor> al2 = page.getAnchors();
+        // no need to click to the first  "add additional textfinder"
+        // we can click the invisibel one  right away
+        List<HtmlElement> linksButtons =
+                page.getDocumentElement().getElementsByAttribute("a", "href", "#");
+        for (HtmlElement e : linksButtons) {
+            String s = e.getTextContent();
+            if (s.trim().equals("Text Finder")) {
+                e.click();
+                // Wait for the YUI JavaScript to load.
+                WebClientUtil.waitForJSExec(page.getWebClient());
+            }
+        }
+        // Configure the second Text Finder
+        List<HtmlInput> ii0 = config.getInputsByName("_.fileSet");
+        ii0.get(1).setValueAttribute("file2");
+        List<HtmlInput> ii1 = config.getInputsByName("_.regexp");
+        ii1.get(1).setValueAttribute(UNIQUE_TEXT);
+        List<HtmlInput> ii2 = config.getInputsByName("_.notBuiltIfFound");
+        ii2.get(1).click();
+        List<HtmlInput> ii3 = config.getInputsByName("_.alsoCheckConsoleOutput");
+        ii3.get(1).click();
+
+        // Submit the page.
+        rule.submit(config);
+
+        // Ensure that the Text Finder was configured correctly.
+        assertEquals(1, project.getPublishersList().size());
+        TextFinderPublisher textFinder = (TextFinderPublisher) project.getPublishersList().get(0);
+        assertEquals("file1", textFinder.getFileSet());
+        assertEquals(UNIQUE_TEXT, textFinder.getRegexp());
+        assertTrue(textFinder.isUnstableIfFound());
+        assertFalse(textFinder.isNotBuiltIfFound());
+        assertTrue(textFinder.isAlsoCheckConsoleOutput());
+        assertEquals(1, textFinder.getAdditionalTextFinders().size());
+        TextFinderModel textFinder2 = textFinder.getAdditionalTextFinders().get(0);
+        assertEquals("file2", textFinder2.getFileSet());
+        assertEquals(UNIQUE_TEXT, textFinder2.getRegexp());
+        assertFalse(textFinder2.isUnstableIfFound());
+        assertTrue(textFinder2.isAlsoCheckConsoleOutput());
+        assertTrue(textFinder2.isNotBuiltIfFound());
     }
 }
