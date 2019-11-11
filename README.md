@@ -8,10 +8,9 @@
 This plugin lets you search for some text using regular expressions in a
 set of files or the console log. Once a match is found, you can
 downgrade a successful build to a status of 
-[unstable](https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE){.external-link},
-[failure](https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE){.external-link},
-or [not
-built](https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT){.external-link}.
+[unstable](https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE),
+[failure](https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE),
+or [not built](https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT).
 
 For example, you can search for the string `failure` in a set of log
 files. If a match is found, you can downgrade the build from success to
@@ -52,18 +51,17 @@ to mark the build as unstable if the expression is found:
 
 ##### Versions 1.12 and newer
 
-See the [GitHub release
-page](https://github.com/jenkinsci/text-finder-plugin/releases){.external-link}.
+See the [GitHub release page](https://github.com/jenkinsci/text-finder-plugin/releases).
 
 ##### Version 1.11 (June 1, 2019)
 
 -   Add pipeline support
-    ([\#12](https://github.com/jenkinsci/text-finder-plugin/pull/12){.external-link})
+    ([\#12](https://github.com/jenkinsci/text-finder-plugin/pull/12))
 -   Add option to set build as not built
-    ([\#16](https://github.com/jenkinsci/text-finder-plugin/pull/16){.external-link})
+    ([\#16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
 
 -   Better log output to console
-    ([\#21](https://github.com/jenkinsci/text-finder-plugin/pull/21){.external-link})
+    ([\#21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
 
 ##### Version 1.10 (Jan 31, 2014)
 
