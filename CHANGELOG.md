@@ -1,17 +1,21 @@
 ## Changelog
 
-### Versions 1.12 and newer
+### 1.12 
 
-See the [GitHub release page](https://github.com/jenkinsci/text-finder-plugin/releases).
+Release date: 2019-08-01
+
+- Documentation updates: Improve writing of plugin description (#28)
+- Internal: 
+- Tests: 
 
 ### 1.11
 
 Release date: 2019-06-01
 
 -   Add pipeline support
-    ([\#12](https://github.com/jenkinsci/text-finder-plugin/pull/12))
+    ([PR 12](https://github.com/jenkinsci/text-finder-plugin/pull/12))
 -   Add option to set build as not built
-    ([\#16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
+    ([PR 16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
 
 -   Better log output to console
     ([\#21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
