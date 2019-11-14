@@ -7,7 +7,7 @@ Release date: 2019-08-01
 - Documentation updates: Improve writing of plugin description
   ([PR 28](https://github.com/jenkinsci/text-finder-plugin/pull/28))
 - Internal: Text Finder now fully supports [JEP-210](https://github.com/jenkinsci/jep/tree/master/jep/210) and requires Jenkins 2.121 LTS or greater and JEP 210-compatible versions of Pipeline plugins.
-  - [JENKINS-54128](https://issues.jenkins-ci.org/browse/JENKINS-54128) - Avoid calling Run.getLogFile ([PR 46](https://github.com/jenkinsci/text-finder-plugin/pull/46))
+  - Avoid calling Run.getLogFile [JENKINS-54128](https://issues.jenkins-ci.org/browse/JENKINS-54128) ([PR 46](https://github.com/jenkinsci/text-finder-plugin/pull/46))
   - Make naming consistent ([PR 29](https://github.com/jenkinsci/text-finder-plugin/pull/29))
 - Tests: Add UI testing ([PR 41](https://github.com/jenkinsci/text-finder-plugin/pull/41))
 
@@ -21,7 +21,7 @@ Release date: 2019-06-01
     ([PR 16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
 
 -   Better log output to console
-    ([\#21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
+    ([PR 21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
 
 ### 1.10
 
