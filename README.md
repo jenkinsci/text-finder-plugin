@@ -24,25 +24,28 @@ which returned an overall exit status of zero.
 ### Usage
 
 The basic pipeline syntax is as follows:
-
-        findText regexp: '<regular expression>', fileSet: '<file set>'
-
+```
+    findText regexp: '<regular expression>', fileSet: '<file set>'
+```
 The regular expression uses the syntax supported by the Java `Pattern`
 class. The file set specifies the path to the files in which to search,
 relative to the workspace root. This can use wildcards, like
 `logs/**/*/*.txt`. See the Ant `FileSet` documentation for details.
 
 To also check the console log, use the following syntax:
-
-        findText regexp: '<regular expression>', fileSet: '<file set>', alsoCheckConsoleOutput: true
+```
+   findText regexp: '<regular expression>', fileSet: '<file set>', alsoCheckConsoleOutput: true
+```
 
 Note that if you just want to check the console log, you can omit the
 file set:
-
-        findText regexp: '<regular expression>', alsoCheckConsoleOutput: true
+```
+    findText regexp: '<regular expression>', alsoCheckConsoleOutput: true
+```
 
 To customize the build result, you can use any combination of
 `succeedIfFound`, `unstableIfFound`, or `notBuiltIfFound`. For example,
 to mark the build as unstable if the expression is found:
-
-        findText regexp: '<regular expression>, alsoCheckConsoleOutput: true, unstableIfFound: true
+```
+    findText regexp: '<regular expression>, alsoCheckConsoleOutput: true, unstableIfFound: true
+```
