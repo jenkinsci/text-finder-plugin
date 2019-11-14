@@ -15,13 +15,13 @@ Release date: 2019-08-01
 
 Release date: 2019-06-01
 
--   Add pipeline support
-    ([PR 12](https://github.com/jenkinsci/text-finder-plugin/pull/12))
--   Add option to set build as not built
-    ([PR 16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
+- Add pipeline support
+  ([PR 12](https://github.com/jenkinsci/text-finder-plugin/pull/12))
+- Add option to set build as not built
+  ([PR 16](https://github.com/jenkinsci/text-finder-plugin/pull/16))
 
--   Better log output to console
-    ([PR 21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
+- Better log output to console
+  ([PR 21](https://github.com/jenkinsci/text-finder-plugin/pull/21))
 
 ### 1.10
 
