@@ -47,5 +47,5 @@ To customize the build result, you can use any combination of
 `succeedIfFound`, `unstableIfFound`, or `notBuiltIfFound`. For example,
 to mark the build as unstable if the expression is found:
 ```
-    findText regexp: '<regular expression>, alsoCheckConsoleOutput: true, unstableIfFound: true
+    findText regexp: '<regular expression>', alsoCheckConsoleOutput: true, unstableIfFound: true
 ```
