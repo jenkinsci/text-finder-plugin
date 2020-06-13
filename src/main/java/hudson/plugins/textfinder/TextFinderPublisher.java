@@ -45,8 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.servlet.ServletException;
-
 /**
  * Text Finder plugin for Jenkins. Search in the workspace using a regular expression and determine
  * build outcome based on matches.
@@ -277,11 +275,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
          *
          * @param value The expression to check
          * @return The form validation result
-         * @throws IOException For backwards compatibility
-         * @throws ServletException For backwards compatibility
          */
-        public FormValidation doCheckRegexp(@QueryParameter String value)
-                throws IOException, ServletException {
+        public FormValidation doCheckRegexp(@QueryParameter String value) {
             value = fixEmpty(value);
             if (value == null) {
                 return FormValidation.ok(); // not entered yet
