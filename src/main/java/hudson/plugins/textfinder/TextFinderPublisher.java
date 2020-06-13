@@ -7,6 +7,7 @@ import hudson.FilePath;
 import hudson.Functions;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.console.ConsoleNote;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -178,16 +179,10 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     /**
      * Search the given regexp pattern.
      *
-     * @param abortAfterFirstHit true to return immediately as soon as the first hit is found. this
-     *     is necessary when we are scanning the console output, because otherwise we'll loop
-     *     forever.
+     * @param isConsoleLog True if the reader represents a console log (as opposed to a file).
      */
     private static boolean checkPattern(
-            Reader r,
-            Pattern pattern,
-            PrintStream logger,
-            String header,
-            boolean abortAfterFirstHit)
+            Reader r, Pattern pattern, PrintStream logger, String header, boolean isConsoleLog)
             throws IOException {
         boolean logFilename = true;
         boolean foundText = false;
@@ -195,6 +190,13 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             // Assume default encoding and text files
             String line;
             while ((line = reader.readLine()) != null) {
+                /*
+                 * Strip console logs of their console notes before searching; otherwise, we might
+                 * accidentally match the search string in the encoded console note.
+                 */
+                if (isConsoleLog) {
+                    line = ConsoleNote.removeNotes(line);
+                }
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.find()) {
                     if (logFilename) { // first occurrence
@@ -205,7 +207,11 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     }
                     logger.println(line);
                     foundText = true;
-                    if (abortAfterFirstHit) {
+                    /*
+                     * When searching console output, return immediately as soon as the first hit is
+                     * found; otherwise, we'll loop forever.
+                     */
+                    if (isConsoleLog) {
                         return true;
                     }
                 }
