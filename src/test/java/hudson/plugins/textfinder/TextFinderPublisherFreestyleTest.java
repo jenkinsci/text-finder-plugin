@@ -7,13 +7,10 @@ import com.gargoylesoftware.htmlunit.WebClientUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import hudson.Functions;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.tasks.BatchFile;
-import hudson.tasks.CommandInterpreter;
-import hudson.tasks.Shell;
+import hudson.plugins.textfinder.test.TestEchoBuilder;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,73 +19,60 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class TextFinderPublisherFreestyleTest {
 
     private static final String UNIQUE_TEXT = "foobar";
-    private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
 
     @Rule public JenkinsRule rule = new JenkinsRule();
 
     @Test
     public void successIfFoundInConsole() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        CommandInterpreter command =
-                Functions.isWindows()
-                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
-                        : new Shell(ECHO_UNIQUE_TEXT);
-        project.getBuildersList().add(command);
+        project.getBuildersList().add(new TestEchoBuilder(UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
         textFinder.setSucceedIfFound(true);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
     public void failureIfFoundInConsole() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        CommandInterpreter command =
-                Functions.isWindows()
-                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
-                        : new Shell(ECHO_UNIQUE_TEXT);
-        project.getBuildersList().add(command);
+        project.getBuildersList().add(new TestEchoBuilder(UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
     public void unstableIfFoundInConsole() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        CommandInterpreter command =
-                Functions.isWindows()
-                        ? new BatchFile("prompt $G\n" + ECHO_UNIQUE_TEXT)
-                        : new Shell(ECHO_UNIQUE_TEXT);
-        project.getBuildersList().add(command);
+        project.getBuildersList().add(new TestEchoBuilder(UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
         textFinder.setUnstableIfFound(true);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test

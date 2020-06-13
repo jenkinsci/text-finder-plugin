@@ -14,7 +14,6 @@ import java.io.File;
 public class TextFinderPublisherPipelineTest {
 
     private static final String UNIQUE_TEXT = "foobar";
-    private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
     private static final String fileSet = "out.txt";
 
     @Rule public JenkinsRule rule = new JenkinsRule();
@@ -47,7 +46,7 @@ public class TextFinderPublisherPipelineTest {
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
+                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
     }
 
     @Test
@@ -78,7 +77,7 @@ public class TextFinderPublisherPipelineTest {
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
+                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
     }
 
     @Test
@@ -109,7 +108,7 @@ public class TextFinderPublisherPipelineTest {
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
+                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
     }
 
     @Test
@@ -140,7 +139,7 @@ public class TextFinderPublisherPipelineTest {
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
+                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
     }
 
     @Test
@@ -175,25 +174,23 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {\n"
-                                + "  isUnix() ? sh('"
-                                + ECHO_UNIQUE_TEXT
-                                + "') : bat(\"prompt \\$G\\r\\n"
-                                + ECHO_UNIQUE_TEXT
-                                + "\")\n"
+                        "  testEcho '"
+                                + UNIQUE_TEXT
+                                + "'\n"
+                                + "node {\n"
                                 + "  findText regexp: '"
                                 + UNIQUE_TEXT
                                 + "', succeedIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
@@ -201,25 +198,23 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {\n"
-                                + "  isUnix() ? sh('"
-                                + ECHO_UNIQUE_TEXT
-                                + "') : bat(\"prompt \\$G\\r\\n"
-                                + ECHO_UNIQUE_TEXT
-                                + "\")\n"
+                        "  testEcho '"
+                                + UNIQUE_TEXT
+                                + "'\n"
+                                + "node {\n"
                                 + "  findText regexp: '"
                                 + UNIQUE_TEXT
                                 + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
@@ -227,25 +222,23 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {\n"
-                                + "  isUnix() ? sh('"
-                                + ECHO_UNIQUE_TEXT
-                                + "') : bat(\"prompt \\$G\\r\\n"
-                                + ECHO_UNIQUE_TEXT
-                                + "\")\n"
+                        "  testEcho '"
+                                + UNIQUE_TEXT
+                                + "'\n"
+                                + "node {\n"
                                 + "  findText regexp: '"
                                 + UNIQUE_TEXT
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
@@ -253,25 +246,23 @@ public class TextFinderPublisherPipelineTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        "node {\n"
-                                + "  isUnix() ? sh('"
-                                + ECHO_UNIQUE_TEXT
-                                + "') : bat(\"prompt \\$G\\r\\n"
-                                + ECHO_UNIQUE_TEXT
-                                + "\")\n"
+                        "  testEcho '"
+                                + UNIQUE_TEXT
+                                + "'\n"
+                                + "node {\n"
                                 + "  findText regexp: '"
                                 + UNIQUE_TEXT
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
+        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 
     @Test
