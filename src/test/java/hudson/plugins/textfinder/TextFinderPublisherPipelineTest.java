@@ -68,8 +68,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "'\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
@@ -80,7 +79,6 @@ public class TextFinderPublisherPipelineTest {
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
-        rule.assertBuildStatus(Result.FAILURE, build);
     }
 
     @Test
@@ -101,8 +99,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', unstableIfFound: true\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
@@ -113,7 +110,6 @@ public class TextFinderPublisherPipelineTest {
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
-        rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
     @Test
@@ -134,8 +130,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', notBuiltIfFound: true\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
                         + UNIQUE_TEXT
@@ -146,7 +141,6 @@ public class TextFinderPublisherPipelineTest {
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build, false);
-        rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
 
     @Test
@@ -218,8 +212,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
@@ -227,7 +220,6 @@ public class TextFinderPublisherPipelineTest {
                         + "' in the console output",
                 build);
         TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
-        rule.assertBuildStatus(Result.FAILURE, build);
     }
 
     @Test
@@ -246,8 +238,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
@@ -255,7 +246,6 @@ public class TextFinderPublisherPipelineTest {
                         + "' in the console output",
                 build);
         TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
-        rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
     @Test
@@ -274,8 +264,7 @@ public class TextFinderPublisherPipelineTest {
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
-        WorkflowRun build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
@@ -283,7 +272,6 @@ public class TextFinderPublisherPipelineTest {
                         + "' in the console output",
                 build);
         TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
-        rule.assertBuildStatus(Result.NOT_BUILT, build);
     }
 
     @Test

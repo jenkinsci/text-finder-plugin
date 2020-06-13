@@ -59,8 +59,7 @@ public class TextFinderPublisherFreestyleTest {
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
@@ -68,7 +67,6 @@ public class TextFinderPublisherFreestyleTest {
                         + "' in the console output",
                 build);
         TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
-        rule.assertBuildStatus(Result.FAILURE, build);
     }
 
     @Test
@@ -83,8 +81,7 @@ public class TextFinderPublisherFreestyleTest {
         textFinder.setUnstableIfFound(true);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
@@ -92,7 +89,6 @@ public class TextFinderPublisherFreestyleTest {
                         + "' in the console output",
                 build);
         TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
-        rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 
     @Test
@@ -101,15 +97,13 @@ public class TextFinderPublisherFreestyleTest {
         TextFinderPublisher textFinder = new TextFinderPublisher(UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
         project.getPublishersList().add(textFinder);
-        FreeStyleBuild build = project.scheduleBuild2(0).get();
-        rule.waitForCompletion(build);
+        FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
                         + UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        rule.assertBuildStatus(Result.SUCCESS, build);
     }
 
     @Test
