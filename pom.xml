@@ -48,26 +48,6 @@
       <tag>${scmTag}</tag>
   </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.coveo</groupId>
-                <artifactId>fmt-maven-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <style>aosp</style>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
