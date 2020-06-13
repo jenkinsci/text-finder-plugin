@@ -2,13 +2,15 @@ package hudson.plugins.textfinder;
 
 import hudson.model.Result;
 import hudson.slaves.DumbSlave;
-import java.io.File;
+
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+
+import java.io.File;
 
 public class TextFinderPublisherAgentTest {
 
@@ -52,9 +54,11 @@ public class TextFinderPublisherAgentTest {
                 new CpsFlowDefinition(
                         String.format(
                                 "node('%s') {\n"
-                                        + "  isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r\\necho foobar\")\n"
-                                        + "  findText regexp: 'foobar', alsoCheckConsoleOutput: true\n"
-                                        + "}\n",
+                                    + "  isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r"
+                                    + "\\n"
+                                    + "echo foobar\")\n"
+                                    + "  findText regexp: 'foobar', alsoCheckConsoleOutput: true\n"
+                                    + "}\n",
                                 agent.getNodeName()),
                         true));
         WorkflowRun build = project.scheduleBuild2(0).get();

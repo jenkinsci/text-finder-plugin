@@ -1,13 +1,14 @@
-# Text Finder
+# Text Finder Plugin
 
 [![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins/text-finder-plugin/master)](https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder)
-[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/text-finder.svg)](https://plugins.jenkins.io/text-finder)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder/)
+[![GitHub Releases](https://img.shields.io/github/release/jenkinsci/text-finder-plugin.svg?label=changelog)](https://github.com/jenkinsci/text-finder-plugin/releases)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/text-finder.svg?color=blue)](https://plugins.jenkins.io/text-finder/)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=jenkinsci/text-finder-plugin)](https://dependabot.com)
 
 This plugin lets you search for some text using regular expressions in a
 set of files or the console log. Once a match is found, you can
-downgrade a successful build to a status of 
+downgrade a successful build to a status of
 [unstable](https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE),
 [failure](https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE),
 or [not built](https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT).
