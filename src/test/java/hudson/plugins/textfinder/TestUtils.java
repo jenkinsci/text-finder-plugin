@@ -2,7 +2,6 @@ package hudson.plugins.textfinder;
 
 import static org.junit.Assert.assertNotNull;
 
-import hudson.Functions;
 import hudson.model.Run;
 
 import org.jenkinsci.plugins.workflow.actions.WorkspaceAction;
@@ -18,32 +17,14 @@ import java.io.IOException;
 /** Utilities for testing Text Finder */
 public class TestUtils {
 
-    private static void assertContainsMatch(
-            String header, String text, JenkinsRule rule, Run<?, ?> build, boolean isShell)
-            throws IOException {
-        String prompt;
-        if (isShell) {
-            prompt = Functions.isWindows() ? ">" : "+ ";
-        } else {
-            prompt = "";
-        }
-        rule.assertLogContains(String.format("%s%s%s", header, prompt, text), build);
-    }
-
-    public static void assertConsoleContainsMatch(
-            String text, JenkinsRule rule, Run<?, ?> build, boolean isShell) throws IOException {
-        assertContainsMatch("", text, rule, build, isShell);
-    }
+    public static final String FILE_SET = "out.txt";
+    public static final String PREFIX = ">>> ";
+    public static final String UNIQUE_TEXT = "foobar";
 
     public static void assertFileContainsMatch(
-            File file, String text, JenkinsRule rule, Run<?, ?> build, boolean isShell)
-            throws IOException {
-        assertContainsMatch(
-                String.format("%s:%s", file, System.getProperty("line.separator")),
-                text,
-                rule,
-                build,
-                isShell);
+            File file, String text, JenkinsRule rule, Run<?, ?> build) throws IOException {
+        rule.assertLogContains(
+                String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
     }
 
     public static File getWorkspace(WorkflowRun build) {

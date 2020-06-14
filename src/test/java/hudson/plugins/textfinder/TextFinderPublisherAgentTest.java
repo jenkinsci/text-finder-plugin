@@ -14,9 +14,6 @@ import java.io.File;
 
 public class TextFinderPublisherAgentTest {
 
-    private static final String UNIQUE_TEXT = "foobar";
-    private static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
-
     @Rule public JenkinsRule rule = new JenkinsRule();
 
     @Test
@@ -34,14 +31,17 @@ public class TextFinderPublisherAgentTest {
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the files at",
+                "[Text Finder] Looking for pattern "
+                        + "'"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'"
+                        + " in the files at",
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(TestUtils.getWorkspace(build), "out.txt"),
-                UNIQUE_TEXT,
+                TestUtils.UNIQUE_TEXT,
                 rule,
-                build,
-                false);
+                build);
     }
 
     @Test
@@ -52,20 +52,21 @@ public class TextFinderPublisherAgentTest {
                 new CpsFlowDefinition(
                         String.format(
                                 "node('%s') {\n"
-                                    + "  isUnix() ? sh('echo foobar') : bat(\"prompt \\$G\\r"
-                                    + "\\n"
-                                    + "echo foobar\")\n"
-                                    + "  findText regexp: 'foobar', alsoCheckConsoleOutput: true\n"
-                                    + "}\n",
+                                        + "  testEcho '"
+                                        + TestUtils.UNIQUE_TEXT
+                                        + "'\n"
+                                        + "  findText regexp: 'foobar', alsoCheckConsoleOutput:"
+                                        + " true\n"
+                                        + "}\n",
                                 agent.getNodeName()),
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
-        TestUtils.assertConsoleContainsMatch(ECHO_UNIQUE_TEXT, rule, build, true);
     }
 }
