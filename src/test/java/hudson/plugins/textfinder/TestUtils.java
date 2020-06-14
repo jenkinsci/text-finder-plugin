@@ -17,7 +17,9 @@ import java.io.IOException;
 /** Utilities for testing Text Finder */
 public class TestUtils {
 
+    public static final String FILE_SET = "out.txt";
     public static final String PREFIX = ">>> ";
+    public static final String UNIQUE_TEXT = "foobar";
 
     public static void assertFileContainsMatch(
             File file, String text, JenkinsRule rule, Run<?, ?> build) throws IOException {

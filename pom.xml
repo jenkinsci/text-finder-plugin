@@ -91,6 +91,12 @@
             <artifactId>workflow-support</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>job-dsl</artifactId>
+            <version>1.77</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

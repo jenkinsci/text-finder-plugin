@@ -13,9 +13,6 @@ import java.io.File;
 
 public class TextFinderPublisherPipelineTest {
 
-    private static final String UNIQUE_TEXT = "foobar";
-    private static final String fileSet = "out.txt";
-
     @Rule public JenkinsRule rule = new JenkinsRule();
 
     @Test
@@ -25,28 +22,31 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  writeFile file: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', text: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', succeedIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
-                        + fileSet
+                        + TestUtils.FILE_SET
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
+                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
     }
 
     @Test
@@ -56,28 +56,31 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  writeFile file: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', text: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "'\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
-                        + fileSet
+                        + TestUtils.FILE_SET
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
+                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
     }
 
     @Test
@@ -87,28 +90,31 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  writeFile file: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', text: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', unstableIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
-                        + fileSet
+                        + TestUtils.FILE_SET
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
+                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
     }
 
     @Test
@@ -118,28 +124,31 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  writeFile file: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', text: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', notBuiltIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
-                        + fileSet
+                        + TestUtils.FILE_SET
                         + "'",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), fileSet), UNIQUE_TEXT, rule, build);
+                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
     }
 
     @Test
@@ -149,22 +158,22 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  writeFile file: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "', text: 'foobaz'\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
-                                + fileSet
+                                + TestUtils.FILE_SET
                                 + "'\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
                 "[Text Finder] Looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the files at "
                         + "'"
-                        + fileSet
+                        + TestUtils.FILE_SET
                         + "'",
                 build);
     }
@@ -175,20 +184,20 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "  testEcho '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', succeedIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
-        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }
@@ -199,20 +208,20 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "  testEcho '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
-        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }
@@ -223,20 +232,20 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "  testEcho '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
-        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }
@@ -247,20 +256,20 @@ public class TextFinderPublisherPipelineTest {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "  testEcho '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
-        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }
@@ -272,7 +281,7 @@ public class TextFinderPublisherPipelineTest {
                 new CpsFlowDefinition(
                         "node {\n"
                                 + "  findText regexp: '"
-                                + UNIQUE_TEXT
+                                + TestUtils.UNIQUE_TEXT
                                 + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
@@ -280,7 +289,7 @@ public class TextFinderPublisherPipelineTest {
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }

@@ -14,8 +14,6 @@ import java.io.File;
 
 public class TextFinderPublisherAgentTest {
 
-    private static final String UNIQUE_TEXT = "foobar";
-
     @Rule public JenkinsRule rule = new JenkinsRule();
 
     @Test
@@ -33,10 +31,17 @@ public class TextFinderPublisherAgentTest {
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern " + "'" + UNIQUE_TEXT + "'" + " in the files at",
+                "[Text Finder] Looking for pattern "
+                        + "'"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'"
+                        + " in the files at",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), "out.txt"), UNIQUE_TEXT, rule, build);
+                new File(TestUtils.getWorkspace(build), "out.txt"),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
     }
 
     @Test
@@ -48,7 +53,7 @@ public class TextFinderPublisherAgentTest {
                         String.format(
                                 "node('%s') {\n"
                                         + "  testEcho '"
-                                        + UNIQUE_TEXT
+                                        + TestUtils.UNIQUE_TEXT
                                         + "'\n"
                                         + "  findText regexp: 'foobar', alsoCheckConsoleOutput:"
                                         + " true\n"
@@ -56,11 +61,11 @@ public class TextFinderPublisherAgentTest {
                                 agent.getNodeName()),
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
-        rule.assertLogContains(TestUtils.PREFIX + UNIQUE_TEXT, build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
                 "[Text Finder] Finished looking for pattern '"
-                        + UNIQUE_TEXT
+                        + TestUtils.UNIQUE_TEXT
                         + "' in the console output",
                 build);
     }

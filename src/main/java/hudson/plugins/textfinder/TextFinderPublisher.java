@@ -144,8 +144,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 + " in the console output");
             }
 
-            final RemoteOutputStream ros = new RemoteOutputStream(logger);
-
             if (fileSet != null) {
                 logger.println(
                         "[Text Finder] Looking for pattern "
@@ -156,15 +154,18 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 + "'"
                                 + fileSet
                                 + "'");
+                RemoteOutputStream ros = new RemoteOutputStream(logger);
                 foundText |= workspace.act(new FileChecker(ros, fileSet, regexp));
             }
 
             if (foundText != succeedIfFound) {
-                final Result finalResult;
+                Result finalResult;
                 if (notBuiltIfFound) {
                     finalResult = Result.NOT_BUILT;
+                } else if (unstableIfFound) {
+                    finalResult = Result.UNSTABLE;
                 } else {
-                    finalResult = unstableIfFound ? Result.UNSTABLE : Result.FAILURE;
+                    finalResult = Result.FAILURE;
                 }
                 run.setResult(finalResult);
             }
