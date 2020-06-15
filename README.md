@@ -8,45 +8,113 @@
 
 This plugin lets you search for some text using regular expressions in a
 set of files or the console log. Once a match is found, you can
-downgrade a successful build to a status of
-[unstable](https://javadoc.jenkins-ci.org/hudson/model/Result.html#UNSTABLE),
-[failure](https://javadoc.jenkins-ci.org/hudson/model/Result.html#FAILURE),
-or [not built](https://javadoc.jenkins-ci.org/hudson/model/Result.html#NOT_BUILT).
+downgrade the build result to `UNSTABLE`, `FAILURE`, `NOT_BUILT`, or
+`ABORTED`. See the Jenkins
+[`Result`](https://javadoc.jenkins-ci.org/hudson/model/Result.html)
+class for more information.
 
 For example, you can search for the string `failure` in a set of log
-files. If a match is found, you can downgrade the build from success to
-failure. This is handy when you have some tools in your build chain that
-don't properly set the exit code.
+files. If a match is found, you can downgrade the build result from
+`SUCCESS` to `FAILURE`. This is handy when you have some tools in your
+build chain that do not properly set the exit code.
 
-Note that the search is always performed, even on builds which returned
-a non-zero exit status, but the reclassification only applies to builds
-which returned an overall exit status of zero.
+## Usage
 
-### Usage
+### [Pipeline](https://jenkins.io/doc/book/pipeline/) jobs
 
-The basic pipeline syntax is as follows:
+The basic Pipeline syntax is as follows:
+
 ```
-    findText regexp: '<regular expression>', fileSet: '<file set>'
+findText(textFinders: [textFinder(regexp: '<regular expression>', fileSet: '<file set>')])
 ```
-The regular expression uses the syntax supported by the Java `Pattern`
-class. The file set specifies the path to the files in which to search,
-relative to the workspace root. This can use wildcards, like
-`logs/**/*/*.txt`. See the Ant `FileSet` documentation for details.
+
+The regular expression uses the syntax supported by the Java
+[`Pattern`](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html)
+class. The file set specifies the path to the files to search, relative
+to the workspace root. This can use wildcards, like `logs/**/*/*.txt`.
+See the documentation for the `@includes` attribute of the Ant
+[`FileSet`](https://ant.apache.org/manual/Types/fileset.html) type for
+details.
 
 To also check the console log, use the following syntax:
+
 ```
-   findText regexp: '<regular expression>', fileSet: '<file set>', alsoCheckConsoleOutput: true
+findText(textFinders: [textFinder(regexp: '<regular expression>', fileSet: '<file set>', alsoCheckConsoleOutput: true)])
 ```
 
 Note that if you just want to check the console log, you can omit the
 file set:
+
 ```
-    findText regexp: '<regular expression>', alsoCheckConsoleOutput: true
+findText(textFinders: [textFinder(regexp: '<regular expression>', alsoCheckConsoleOutput: true)])
 ```
 
-To customize the build result, you can use any combination of
-`succeedIfFound`, `unstableIfFound`, or `notBuiltIfFound`. For example,
-to mark the build as unstable if the expression is found:
+To downgrade the build result, use the following syntax:
+
 ```
-    findText regexp: '<regular expression>', alsoCheckConsoleOutput: true, unstableIfFound: true
+findText(textFinders: [textFinder([...], buildResult: 'UNSTABLE')])
+```
+
+If a match is found, the build result will be set to this value. Note
+that the build result can only get worse, so you cannot change the
+result to `SUCCESS` if the current result is `UNSTABLE` or worse. Use
+`SUCCESS` to keep the build result from being set when a match is found.
+
+To search for multiple regular expressions, use the following syntax:
+
+```
+findText(textFinders: [
+  textFinder(regexp: '<regular expression 1>', [...]),
+  textFinder(regexp: '<regular expression 2>', [...]),
+  textFinder(regexp: '<regular expression 3>', [...])
+])
+```
+
+### Freestyle jobs
+
+This plugin provides [Job DSL](https://plugins.jenkins.io/job-dsl/)
+support for Freestyle jobs using [the Dynamic
+DSL](https://github.com/jenkinsci/job-dsl-plugin/wiki/Dynamic-DSL). For
+example:
+
+```
+job('example') {
+  publishers {
+    findText {
+      textFinders {
+        textFinder {
+          regexp '<regular expression>'
+          fileSet '<file set>'
+          alsoCheckConsoleOutput true
+          buildResult 'UNSTABLE'
+        }
+      }
+    }
+  }
+}
+```
+
+To search for multiple regular expressions, use the following syntax:
+
+```
+job('example') {
+  publishers {
+    findText {
+      textFinders {
+        textFinder {
+          regexp '<regular expression 1>'
+          [...]
+        }
+        textFinder {
+          regexp '<regular expression 2>'
+          [...]
+        }
+        textFinder {
+          regexp '<regular expression 3>'
+          [...]
+        }
+      }
+    }
+  }
+}
 ```

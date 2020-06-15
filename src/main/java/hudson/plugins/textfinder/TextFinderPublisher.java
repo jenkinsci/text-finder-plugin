@@ -1,12 +1,9 @@
 package hudson.plugins.textfinder;
 
-import static hudson.Util.fixEmpty;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.console.ConsoleNote;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
@@ -18,7 +15,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import hudson.util.FormValidation;
 
 import jenkins.MasterToSlaveFileCallable;
 import jenkins.tasks.SimpleBuildStep;
@@ -27,9 +23,11 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,9 +39,14 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import javax.annotation.Nonnull;
 
 /**
  * Text Finder plugin for Jenkins. Search in the workspace using a regular expression and determine
@@ -53,27 +56,52 @@ import java.util.regex.PatternSyntaxException;
  */
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
-    public String fileSet;
-    public final String regexp;
-    public boolean succeedIfFound;
-    public boolean unstableIfFound;
-    public boolean notBuiltIfFound;
+    @Nonnull private List<TextFinder> textFinders;
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient String fileSet;
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient String regexp;
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient boolean succeedIfFound;
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient boolean unstableIfFound;
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient boolean notBuiltIfFound;
+
     /** True to also scan the whole console output */
-    public boolean alsoCheckConsoleOutput;
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public transient boolean alsoCheckConsoleOutput;
+
+    /** Used only by Stapler in the snippetizer. */
+    @Deprecated
+    @Restricted(DoNotUse.class)
+    public transient String buildResult;
 
     @DataBoundConstructor
-    public TextFinderPublisher(String regexp) {
-        this.regexp = regexp;
-
-        // Attempt to compile regular expression
-        try {
-            Pattern.compile(regexp);
-        } catch (PatternSyntaxException e) {
-            // falls through
-        }
+    public TextFinderPublisher() {
+        textFinders = new ArrayList<>();
     }
 
     @Deprecated
+    @Restricted(NoExternalUse.class)
+    public TextFinderPublisher(String regexp) {
+        this();
+        textFinders.add(new TextFinder(regexp));
+    }
+
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public TextFinderPublisher(
             String fileSet,
             String regexp,
@@ -81,35 +109,125 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             boolean unstableIfFound,
             boolean alsoCheckConsoleOutput) {
         this(regexp);
-        this.fileSet = Util.fixEmpty(fileSet.trim());
-        this.succeedIfFound = succeedIfFound;
-        this.unstableIfFound = unstableIfFound;
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+        setFileSet(fileSet);
+        setSucceedIfFound(succeedIfFound);
+        setUnstableIfFound(unstableIfFound);
+        setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
+    }
+
+    @Nonnull
+    public List<TextFinder> getTextFinders() {
+        return textFinders;
     }
 
     @DataBoundSetter
+    public void setTextFinders(List<TextFinder> textFinders) {
+        this.textFinders = textFinders != null ? new ArrayList<>(textFinders) : new ArrayList<>();
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public void setRegexp(String regexp) {
+        getFirst().setRegexp(regexp);
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public void setFileSet(String fileSet) {
-        this.fileSet = Util.fixEmpty(fileSet.trim());
+        getFirst().setFileSet(fileSet);
     }
 
     @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public void setBuildResult(String buildResult) {
+        getFirst().setBuildResult(buildResult);
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public void setSucceedIfFound(boolean succeedIfFound) {
-        this.succeedIfFound = succeedIfFound;
+        if (succeedIfFound) {
+            getFirst().setBuildResult(Result.SUCCESS.toString());
+        }
     }
 
     @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public void setUnstableIfFound(boolean unstableIfFound) {
-        this.unstableIfFound = unstableIfFound;
+        if (unstableIfFound) {
+            getFirst().setBuildResult(Result.UNSTABLE.toString());
+        }
     }
 
     @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public void setNotBuiltIfFound(boolean notBuiltIfFound) {
-        this.notBuiltIfFound = notBuiltIfFound;
+        if (notBuiltIfFound) {
+            getFirst().setBuildResult(Result.NOT_BUILT.toString());
+        }
     }
 
     @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
     public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
-        this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+        getFirst().setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
+    }
+
+    private TextFinder getFirst() {
+        if (textFinders.isEmpty()) {
+            // This is gross, but fortunately it is only used in a deprecated code path.
+            TextFinder first = new TextFinder("");
+            textFinders.add(first);
+            return first;
+        } else {
+            return textFinders.get(0);
+        }
+    }
+
+    /**
+     * Called by XStream after object construction
+     *
+     * @return modified object
+     */
+    protected Object readResolve() {
+        if (regexp != null) {
+            setTextFinders(Collections.singletonList(new TextFinder(regexp)));
+            regexp = null;
+        }
+
+        if (fileSet != null) {
+            setFileSet(fileSet);
+            fileSet = null;
+        }
+
+        if (succeedIfFound) {
+            setSucceedIfFound(succeedIfFound);
+            succeedIfFound = false;
+        }
+
+        if (unstableIfFound) {
+            setUnstableIfFound(unstableIfFound);
+            unstableIfFound = false;
+        }
+
+        if (notBuiltIfFound) {
+            setNotBuiltIfFound(notBuiltIfFound);
+            notBuiltIfFound = false;
+        }
+
+        if (alsoCheckConsoleOutput) {
+            setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
+            alsoCheckConsoleOutput = false;
+        }
+
+        return this;
     }
 
     @Override
@@ -118,56 +236,64 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     }
 
     @Override
-    public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
+    public void perform(
+            @Nonnull Run<?, ?> run,
+            @Nonnull FilePath workspace,
+            @Nonnull Launcher launcher,
+            @Nonnull TaskListener listener)
             throws InterruptedException, IOException {
-        findText(run, workspace, listener);
+        for (TextFinder textFinder : textFinders) {
+            findText(textFinder, run, workspace, listener);
+        }
     }
 
     /** Indicates an orderly abortion of the processing. */
     private static final class AbortException extends RuntimeException {}
 
-    private void findText(Run<?, ?> run, FilePath workspace, TaskListener listener)
+    private static void findText(
+            TextFinder textFinder, Run<?, ?> run, FilePath workspace, TaskListener listener)
             throws IOException, InterruptedException {
         try {
             PrintStream logger = listener.getLogger();
             boolean foundText = false;
 
-            if (alsoCheckConsoleOutput) {
+            if (textFinder.isAlsoCheckConsoleOutput()) {
                 // Do not mention the pattern we are looking for to avoid false positives
-                logger.println("[Text Finder] Scanning console output...");
-                foundText |= checkConsole(run, compilePattern(logger, regexp), logger);
+                logger.println("[Text Finder] Searching console output...");
+                foundText |=
+                        checkConsole(run, compilePattern(logger, textFinder.getRegexp()), logger);
                 logger.println(
-                        "[Text Finder] Finished looking for pattern "
-                                + "'"
-                                + regexp
-                                + "'"
-                                + " in the console output");
+                        "[Text Finder] Finished searching for pattern '"
+                                + textFinder.getRegexp()
+                                + "' in console output.");
             }
 
-            if (fileSet != null) {
+            if (textFinder.getFileSet() != null) {
                 logger.println(
-                        "[Text Finder] Looking for pattern "
-                                + "'"
-                                + regexp
-                                + "'"
-                                + " in the files at "
-                                + "'"
-                                + fileSet
-                                + "'");
+                        "[Text Finder] Searching for pattern '"
+                                + textFinder.getRegexp()
+                                + "' in file set '"
+                                + textFinder.getFileSet()
+                                + "'...");
                 RemoteOutputStream ros = new RemoteOutputStream(logger);
-                foundText |= workspace.act(new FileChecker(ros, fileSet, regexp));
+                foundText |=
+                        workspace.act(
+                                new FileChecker(
+                                        ros, textFinder.getFileSet(), textFinder.getRegexp()));
+                logger.println(
+                        "[Text Finder] Finished searching for pattern '"
+                                + textFinder.getRegexp()
+                                + "' in file set '"
+                                + textFinder.getFileSet()
+                                + "'.");
             }
 
-            if (foundText != succeedIfFound) {
-                Result finalResult;
-                if (notBuiltIfFound) {
-                    finalResult = Result.NOT_BUILT;
-                } else if (unstableIfFound) {
-                    finalResult = Result.UNSTABLE;
-                } else {
-                    finalResult = Result.FAILURE;
-                }
-                run.setResult(finalResult);
+            if (foundText && !textFinder.getBuildResult().equals(Result.SUCCESS.toString())) {
+                logger.println(
+                        "[Text Finder] Setting build result to '"
+                                + textFinder.getBuildResult()
+                                + "'.");
+                run.setResult(Result.fromString(textFinder.getBuildResult()));
             }
         } catch (AbortException e) {
             // no test file found
@@ -269,26 +395,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             return true;
-        }
-
-        /**
-         * Checks the regular expression validity.
-         *
-         * @param value The expression to check
-         * @return The form validation result
-         */
-        public FormValidation doCheckRegexp(@QueryParameter String value) {
-            value = fixEmpty(value);
-            if (value == null) {
-                return FormValidation.ok(); // not entered yet
-            }
-
-            try {
-                Pattern.compile(value);
-                return FormValidation.ok();
-            } catch (PatternSyntaxException e) {
-                return FormValidation.error(e.getMessage());
-            }
         }
     }
 

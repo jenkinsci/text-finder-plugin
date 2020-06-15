@@ -21,7 +21,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testWriteFileBuilder {"
+                                + "    testWriteFileBuilder {\n"
                                 + "      file '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
@@ -31,29 +31,39 @@ public class TextFinderPublisherFreestyleJobDslTest {
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "      fileSet '"
+                                + "          fileSet '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
-                                + "      succeedIfFound true\n"
+                                + "          buildResult 'SUCCESS'\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern '"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "' in the files at "
-                        + "'"
+                        + "' in file set '"
                         + TestUtils.FILE_SET
-                        + "'",
+                        + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
                 TestUtils.UNIQUE_TEXT,
                 rule,
+                build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
                 build);
     }
 
@@ -62,7 +72,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testWriteFileBuilder {"
+                                + "    testWriteFileBuilder {\n"
                                 + "      file '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
@@ -72,29 +82,40 @@ public class TextFinderPublisherFreestyleJobDslTest {
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      fileSet '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern '"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "' in the files at "
-                        + "'"
+                        + "' in file set '"
                         + TestUtils.FILE_SET
-                        + "'",
+                        + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
                 TestUtils.UNIQUE_TEXT,
                 rule,
                 build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
     @Test
@@ -102,7 +123,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testWriteFileBuilder {"
+                                + "    testWriteFileBuilder {\n"
                                 + "      file '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
@@ -112,30 +133,41 @@ public class TextFinderPublisherFreestyleJobDslTest {
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      fileSet '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
-                                + "      unstableIfFound true\n"
+                                + "      buildResult 'UNSTABLE'\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern '"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "' in the files at "
-                        + "'"
+                        + "' in file set '"
                         + TestUtils.FILE_SET
-                        + "'",
+                        + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
                 TestUtils.UNIQUE_TEXT,
                 rule,
                 build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
     @Test
@@ -143,7 +175,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testWriteFileBuilder {"
+                                + "    testWriteFileBuilder {\n"
                                 + "      file '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
@@ -153,30 +185,163 @@ public class TextFinderPublisherFreestyleJobDslTest {
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      fileSet '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
-                                + "      notBuiltIfFound true\n"
+                                + "      buildResult 'NOT_BUILT'\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern '"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "' in the files at "
-                        + "'"
+                        + "' in file set '"
                         + TestUtils.FILE_SET
-                        + "'",
+                        + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
                 new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
                 TestUtils.UNIQUE_TEXT,
                 rule,
                 build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'NOT_BUILT'.", build);
+    }
+
+    @Test
+    public void abortedIfFoundInFile() throws Exception {
+        FreeStyleProject project =
+                createProjectFromDsl(
+                        "  steps {\n"
+                                + "    testWriteFileBuilder {\n"
+                                + "      file '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "      text '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "    }\n"
+                                + "  }\n"
+                                + "  publishers {\n"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      fileSet '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "      buildResult 'ABORTED'\n"
+                                + "        }\n"
+                                + "      }\n"
+                                + "    }\n"
+                                + "  }\n");
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.ABORTED, project);
+        rule.assertLogContains(
+                "[Text Finder] Searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        TestUtils.assertFileContainsMatch(
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'ABORTED'.", build);
+    }
+
+    @Test
+    public void multipleTextFindersInFile() throws Exception {
+        FreeStyleProject project =
+                createProjectFromDsl(
+                        "  steps {\n"
+                                + "    testWriteFileBuilder {\n"
+                                + "      file '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "      text '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "    }\n"
+                                + "  }\n"
+                                + "  publishers {\n"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      fileSet '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "      buildResult 'SUCCESS'\n"
+                                + "        }\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      fileSet '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "        }\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      fileSet '"
+                                + TestUtils.FILE_SET
+                                + "'\n"
+                                + "      buildResult 'UNSTABLE'\n"
+                                + "        }\n"
+                                + "      }\n"
+                                + "    }\n"
+                                + "  }\n");
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(
+                "[Text Finder] Searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        TestUtils.assertFileContainsMatch(
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
+                TestUtils.UNIQUE_TEXT,
+                rule,
+                build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
+        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
     @Test
@@ -184,7 +349,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testWriteFileBuilder {"
+                                + "    testWriteFileBuilder {\n"
                                 + "      file '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
@@ -192,23 +357,33 @@ public class TextFinderPublisherFreestyleJobDslTest {
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      fileSet '"
                                 + TestUtils.FILE_SET
                                 + "'\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern '"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "' in the files at "
-                        + "'"
+                        + "' in file set '"
                         + TestUtils.FILE_SET
-                        + "'",
+                        + "'.",
+                build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
                 build);
     }
 
@@ -217,28 +392,30 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testEchoBuilder {"
+                                + "    testEchoBuilder {\n"
                                 + "      message '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "      succeedIfFound true\n"
+                                + "      buildResult 'SUCCESS'\n"
                                 + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
     }
 
@@ -247,28 +424,31 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testEchoBuilder {"
+                                + "    testEchoBuilder {\n"
                                 + "      message '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
     @Test
@@ -276,29 +456,32 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testEchoBuilder {"
+                                + "    testEchoBuilder {\n"
                                 + "      message '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "      unstableIfFound true\n"
+                                + "      buildResult 'UNSTABLE'\n"
                                 + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
     @Test
@@ -306,29 +489,65 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  steps {\n"
-                                + "    testEchoBuilder {"
+                                + "    testEchoBuilder {\n"
                                 + "      message '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "    }\n"
                                 + "  }\n"
                                 + "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "      notBuiltIfFound true\n"
+                                + "      buildResult 'NOT_BUILT'\n"
                                 + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+        rule.assertLogContains("Setting build result to 'NOT_BUILT'.", build);
+    }
+
+    @Test
+    public void abortedIfFoundInConsole() throws Exception {
+        FreeStyleProject project =
+                createProjectFromDsl(
+                        "  steps {\n"
+                                + "    testEchoBuilder {\n"
+                                + "      message '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "    }\n"
+                                + "  }\n"
+                                + "  publishers {\n"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      buildResult 'ABORTED'\n"
+                                + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
+                                + "    }\n"
+                                + "  }\n");
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.ABORTED, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
+        rule.assertLogContains(
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
+                build);
+        rule.assertLogContains("Setting build result to 'ABORTED'.", build);
     }
 
     @Test
@@ -336,20 +555,70 @@ public class TextFinderPublisherFreestyleJobDslTest {
         FreeStyleProject project =
                 createProjectFromDsl(
                         "  publishers {\n"
-                                + "    findText {"
-                                + "      regexp '"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
                                 + "    }\n"
                                 + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+    }
+
+    @Test
+    public void multipleTextFindersInConsole() throws Exception {
+        FreeStyleProject project =
+                createProjectFromDsl(
+                        "  steps {\n"
+                                + "    testEchoBuilder {\n"
+                                + "      message '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "    }\n"
+                                + "  }\n"
+                                + "  publishers {\n"
+                                + "    findText {\n"
+                                + "      textFinders {\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      buildResult 'SUCCESS'\n"
+                                + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "        textFinder {\n"
+                                + "          regexp '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "      buildResult 'UNSTABLE'\n"
+                                + "      alsoCheckConsoleOutput true\n"
+                                + "        }\n"
+                                + "      }\n"
+                                + "    }\n"
+                                + "  }\n");
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
+        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
+        rule.assertLogContains(
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
+        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
     private FreeStyleProject createProjectFromDsl(String dsl) throws Exception {
