@@ -10,7 +10,7 @@
 
     <artifactId>text-finder</artifactId>
     <packaging>hpi</packaging>
-    <version>1.13</version>
+    <version>${revision}${changelist}</version>
     <name>Text Finder</name>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     <licenses>
@@ -21,7 +21,7 @@
         </license>
     </licenses>
     <properties>
-        <revision>1.13</revision>
+        <revision>1.14</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.164.3</jenkins.version>
         <java.level>8</java.level>
@@ -45,7 +45,7 @@
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>text-finder-1.13</tag>
+        <tag>${scmTag}</tag>
     </scm>
 
     <dependencyManagement>
