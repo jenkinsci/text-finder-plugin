@@ -11,7 +11,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
 
-public class TextFinderPublisherPipelineTest {
+public class TextFinderPublisherPipelineCompatibilityTest {
 
     @Rule public JenkinsRule rule = new JenkinsRule();
 
@@ -26,11 +26,11 @@ public class TextFinderPublisherPipelineTest {
                                 + "', text: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
                                 + TestUtils.FILE_SET
-                                + "', buildResult: 'SUCCESS')])\n"
+                                + "', succeedIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
@@ -66,11 +66,11 @@ public class TextFinderPublisherPipelineTest {
                                 + "', text: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
                                 + TestUtils.FILE_SET
-                                + "')])\n"
+                                + "'\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
@@ -107,11 +107,11 @@ public class TextFinderPublisherPipelineTest {
                                 + "', text: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
                                 + TestUtils.FILE_SET
-                                + "', buildResult: 'UNSTABLE')])\n"
+                                + "', unstableIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
@@ -148,11 +148,11 @@ public class TextFinderPublisherPipelineTest {
                                 + "', text: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
                                 + TestUtils.FILE_SET
-                                + "', buildResult: 'NOT_BUILT')])\n"
+                                + "', notBuiltIfFound: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
@@ -179,47 +179,6 @@ public class TextFinderPublisherPipelineTest {
     }
 
     @Test
-    public void abortedIfFoundInFile() throws Exception {
-        WorkflowJob project = rule.createProject(WorkflowJob.class);
-        project.setDefinition(
-                new CpsFlowDefinition(
-                        "node {\n"
-                                + "  writeFile file: '"
-                                + TestUtils.FILE_SET
-                                + "', text: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', fileSet: '"
-                                + TestUtils.FILE_SET
-                                + "', buildResult: 'ABORTED')])\n"
-                                + "}\n",
-                        true));
-        WorkflowRun build = rule.buildAndAssertStatus(Result.ABORTED, project);
-        rule.assertLogContains(
-                "[Text Finder] Searching for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in file set '"
-                        + TestUtils.FILE_SET
-                        + "'.",
-                build);
-        TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
-        rule.assertLogContains(
-                "[Text Finder] Finished searching for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in file set '"
-                        + TestUtils.FILE_SET
-                        + "'.",
-                build);
-        rule.assertLogContains("Setting build result to 'ABORTED'.", build);
-    }
-
-    @Test
     public void notFoundInFile() throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
@@ -228,11 +187,11 @@ public class TextFinderPublisherPipelineTest {
                                 + "  writeFile file: '"
                                 + TestUtils.FILE_SET
                                 + "', text: 'foobaz'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
                                 + "', fileSet: '"
                                 + TestUtils.FILE_SET
-                                + "')])\n"
+                                + "'\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
@@ -253,59 +212,6 @@ public class TextFinderPublisherPipelineTest {
     }
 
     @Test
-    public void multipleTextFindersInFile() throws Exception {
-        WorkflowJob project = rule.createProject(WorkflowJob.class);
-        project.setDefinition(
-                new CpsFlowDefinition(
-                        "node {\n"
-                                + "  writeFile file: '"
-                                + TestUtils.FILE_SET
-                                + "', text: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "'\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', fileSet: '"
-                                + TestUtils.FILE_SET
-                                + "', buildResult: 'SUCCESS'),\n"
-                                + "      textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', fileSet: '"
-                                + TestUtils.FILE_SET
-                                + "'),\n"
-                                + "      textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', fileSet: '"
-                                + TestUtils.FILE_SET
-                                + "', buildResult: 'UNSTABLE')])\n"
-                                + "}\n",
-                        true));
-
-        WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
-        rule.assertLogContains(
-                "[Text Finder] Searching for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in file set '"
-                        + TestUtils.FILE_SET
-                        + "'.",
-                build);
-        TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
-        rule.assertLogContains(
-                "[Text Finder] Finished searching for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in file set '"
-                        + TestUtils.FILE_SET
-                        + "'.",
-                build);
-        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
-        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
-    }
-
-    @Test
     public void successIfFoundInConsole() throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
@@ -314,9 +220,9 @@ public class TextFinderPublisherPipelineTest {
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'SUCCESS', alsoCheckConsoleOutput: true)])\n"
+                                + "', succeedIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
@@ -336,9 +242,9 @@ public class TextFinderPublisherPipelineTest {
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
-                                + "', alsoCheckConsoleOutput: true)])\n"
+                                + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
@@ -359,9 +265,9 @@ public class TextFinderPublisherPipelineTest {
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'UNSTABLE', alsoCheckConsoleOutput: true)])\n"
+                                + "', unstableIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
@@ -382,9 +288,9 @@ public class TextFinderPublisherPipelineTest {
                                 + TestUtils.UNIQUE_TEXT
                                 + "'\n"
                                 + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'NOT_BUILT', alsoCheckConsoleOutput: true)])\n"
+                                + "', notBuiltIfFound: true, alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
@@ -397,37 +303,14 @@ public class TextFinderPublisherPipelineTest {
     }
 
     @Test
-    public void abortedBuiltIfFoundInConsole() throws Exception {
-        WorkflowJob project = rule.createProject(WorkflowJob.class);
-        project.setDefinition(
-                new CpsFlowDefinition(
-                        "  testEcho '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "'\n"
-                                + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'ABORTED', alsoCheckConsoleOutput: true)])\n"
-                                + "}\n",
-                        true));
-        WorkflowRun build = rule.buildAndAssertStatus(Result.ABORTED, project);
-        rule.assertLogContains("[Text Finder] Searching console output...", build);
-        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
-        rule.assertLogContains("Setting build result to 'ABORTED'.", build);
-    }
-
-    @Test
     public void notFoundInConsole() throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
+                                + "  findText regexp: '"
                                 + TestUtils.UNIQUE_TEXT
-                                + "', alsoCheckConsoleOutput: true)])\n"
+                                + "', alsoCheckConsoleOutput: true\n"
                                 + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertSuccess(project);
@@ -435,36 +318,5 @@ public class TextFinderPublisherPipelineTest {
         rule.assertLogContains(
                 "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
-    }
-
-    @Test
-    public void multipleTextFindersInConsole() throws Exception {
-        WorkflowJob project = rule.createProject(WorkflowJob.class);
-        project.setDefinition(
-                new CpsFlowDefinition(
-                        "  testEcho '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "'\n"
-                                + "node {\n"
-                                + "  findText(textFinders: [textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'SUCCESS', alsoCheckConsoleOutput: true),\n"
-                                + "      textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', alsoCheckConsoleOutput: true),\n"
-                                + "      textFinder(regexp: '"
-                                + TestUtils.UNIQUE_TEXT
-                                + "', buildResult: 'UNSTABLE', alsoCheckConsoleOutput: true)])\n"
-                                + "}\n",
-                        true));
-        WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
-        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Searching console output...", build);
-        rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
-        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
-        rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 }

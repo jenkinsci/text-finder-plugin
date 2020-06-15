@@ -22,26 +22,38 @@ public class TextFinderPublisherAgentTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        String.format(
-                                "node('%s') {\n"
-                                        + "  writeFile file: 'out.txt', text: 'foobar'\n"
-                                        + "  findText regexp: 'foobar', fileSet: 'out.txt'\n"
-                                        + "}\n",
-                                agent.getNodeName()),
+                        "node('"
+                                + agent.getNodeName()
+                                + "') {\n"
+                                + "  writeFile file: '"
+                                + TestUtils.FILE_SET
+                                + "', text: 'foobar'\n"
+                                + "  findText(textFinders: [textFinder(regexp: 'foobar', fileSet: '"
+                                + TestUtils.FILE_SET
+                                + "')])\n"
+                                + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
-                "[Text Finder] Looking for pattern "
-                        + "'"
+                "[Text Finder] Searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
-                        + "'"
-                        + " in the files at",
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(TestUtils.getWorkspace(build), "out.txt"),
+                new File(TestUtils.getWorkspace(build), TestUtils.FILE_SET),
                 TestUtils.UNIQUE_TEXT,
                 rule,
                 build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
     @Test
@@ -50,23 +62,22 @@ public class TextFinderPublisherAgentTest {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(
                 new CpsFlowDefinition(
-                        String.format(
-                                "node('%s') {\n"
-                                        + "  testEcho '"
-                                        + TestUtils.UNIQUE_TEXT
-                                        + "'\n"
-                                        + "  findText regexp: 'foobar', alsoCheckConsoleOutput:"
-                                        + " true\n"
-                                        + "}\n",
-                                agent.getNodeName()),
+                        "node('"
+                                + agent.getNodeName()
+                                + "') {\n"
+                                + "  testEcho '"
+                                + TestUtils.UNIQUE_TEXT
+                                + "'\n"
+                                + "  findText(textFinders: [textFinder(regexp: 'foobar',"
+                                + " alsoCheckConsoleOutput: true)])\n"
+                                + "}\n",
                         true));
         WorkflowRun build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
-        rule.assertLogContains("[Text Finder] Scanning console output...", build);
         rule.assertLogContains(
-                "[Text Finder] Finished looking for pattern '"
-                        + TestUtils.UNIQUE_TEXT
-                        + "' in the console output",
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 }
