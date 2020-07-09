@@ -7,11 +7,8 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=jenkinsci/text-finder-plugin)](https://dependabot.com)
 
 This plugin lets you search for some text using regular expressions in a
-set of files or the console log. Once a match is found, you can
-downgrade the build result to `UNSTABLE`, `FAILURE`, `NOT_BUILT`, or
-`ABORTED`. See the Jenkins
-[`Result`](https://javadoc.jenkins-ci.org/hudson/model/Result.html)
-class for more information.
+set of files or the console log. Based on the outcome, you can downgrade
+the build result to `UNSTABLE`, `FAILURE`, `NOT_BUILT`, or `ABORTED`.
 
 For example, you can search for the string `failure` in a set of log
 files. If a match is found, you can downgrade the build result from
@@ -57,8 +54,15 @@ findText(textFinders: [textFinder([...], buildResult: 'UNSTABLE')])
 
 If a match is found, the build result will be set to this value. Note
 that the build result can only get worse, so you cannot change the
-result to `SUCCESS` if the current result is `UNSTABLE` or worse. Use
-`SUCCESS` to keep the build result from being set when a match is found.
+result to `SUCCESS` if the current result is `UNSTABLE` or worse.
+
+Whether or not a build is downgraded depends on its change condition. The
+default change condition is `MATCH_FOUND`, which downgrades the build result if
+a match is found. To downgrade the build result if a match is _not_ found, set
+the change condition to `MATCH_NOT_FOUND`:
+
+```
+findText(textFinders: [textFinder([...], changeCondition: 'MATCH_NOT_FOUND', buildResult: 'UNSTABLE')])
 
 To search for multiple regular expressions, use the following syntax:
 
@@ -85,6 +89,7 @@ job('example') {
         textFinder {
           regexp '<regular expression>'
           fileSet '<file set>'
+          changeCondition '<MATCH_FOUND or MATCH_NOT_FOUND>'
           alsoCheckConsoleOutput true
           buildResult 'UNSTABLE'
         }

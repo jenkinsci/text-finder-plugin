@@ -29,6 +29,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
     @Nonnull private /* final */ String regexp;
     @CheckForNull private String fileSet;
     @Nonnull private String buildResult = Result.FAILURE.toString();
+    private TextFinderChangeCondition changeCondition = TextFinderChangeCondition.MATCH_FOUND;
     private boolean alsoCheckConsoleOutput;
 
     @Restricted(NoExternalUse.class)
@@ -80,6 +81,17 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
         }
 
         this.buildResult = buildResult;
+    }
+
+    @Restricted(NoExternalUse.class)
+    public TextFinderChangeCondition getChangeCondition() {
+        return changeCondition;
+    }
+
+    @DataBoundSetter
+    @Restricted(NoExternalUse.class)
+    public void setChangeCondition(TextFinderChangeCondition changeCondition) {
+        this.changeCondition = changeCondition;
     }
 
     @Restricted(NoExternalUse.class)

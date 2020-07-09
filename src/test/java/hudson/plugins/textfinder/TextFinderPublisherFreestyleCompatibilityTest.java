@@ -148,7 +148,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void notFoundInFile() throws Exception {
+    public void successIfNotFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -169,6 +169,32 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
                         + TestUtils.FILE_SET
                         + "'.",
                 build);
+    }
+
+    @Test
+    public void failureIfNotFoundInFile() throws Exception {
+        FreeStyleProject project = rule.createFreeStyleProject();
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
+        TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
+        textFinder.setFileSet(TestUtils.FILE_SET);
+        textFinder.setSucceedIfFound(true);
+        project.getPublishersList().add(textFinder);
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains(
+                "[Text Finder] Searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "' in file set '"
+                        + TestUtils.FILE_SET
+                        + "'.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
     @Test
@@ -238,7 +264,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void notFoundInConsole() throws Exception {
+    public void successIfNotFoundInConsole() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
@@ -248,6 +274,21 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         rule.assertLogContains(
                 "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
                 build);
+    }
+
+    @Test
+    public void failureIfNotFoundInConsole() throws Exception {
+        FreeStyleProject project = rule.createFreeStyleProject();
+        TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
+        textFinder.setAlsoCheckConsoleOutput(true);
+        textFinder.setSucceedIfFound(true);
+        project.getPublishersList().add(textFinder);
+        FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
+        rule.assertLogContains(
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
+                build);
+        rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
     @LocalData
