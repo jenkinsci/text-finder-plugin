@@ -1,5 +1,7 @@
 package hudson.plugins.textfinder;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Functions;
@@ -46,8 +48,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.annotation.Nonnull;
-
 /**
  * Text Finder plugin for Jenkins. Search in the workspace using a regular expression and determine
  * build outcome based on matches.
@@ -56,7 +56,7 @@ import javax.annotation.Nonnull;
  */
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
-    @Nonnull private List<TextFinder> textFinders;
+    @NonNull private List<TextFinder> textFinders;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
@@ -115,7 +115,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
     }
 
-    @Nonnull
+    @NonNull
     public List<TextFinder> getTextFinders() {
         return textFinders;
     }
@@ -240,10 +240,10 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
     @Override
     public void perform(
-            @Nonnull Run<?, ?> run,
-            @Nonnull FilePath workspace,
-            @Nonnull Launcher launcher,
-            @Nonnull TaskListener listener)
+            @NonNull Run<?, ?> run,
+            @NonNull FilePath workspace,
+            @NonNull Launcher launcher,
+            @NonNull TaskListener listener)
             throws InterruptedException, IOException {
         for (TextFinder textFinder : textFinders) {
             findText(textFinder, run, workspace, listener);

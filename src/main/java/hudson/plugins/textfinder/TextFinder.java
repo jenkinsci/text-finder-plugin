@@ -1,5 +1,8 @@
 package hudson.plugins.textfinder;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
@@ -21,14 +24,11 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 public class TextFinder extends AbstractDescribableImpl<TextFinder> implements Serializable {
 
-    @Nonnull private /* final */ String regexp;
+    @NonNull private /* final */ String regexp;
     @CheckForNull private String fileSet;
-    @Nonnull private String buildResult = Result.FAILURE.toString();
+    @NonNull private String buildResult = Result.FAILURE.toString();
     private TextFinderChangeCondition changeCondition = TextFinderChangeCondition.MATCH_FOUND;
     private boolean alsoCheckConsoleOutput;
 
@@ -108,7 +108,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
     @Symbol("textFinder")
     @Extension
     public static class DescriptorImpl extends Descriptor<TextFinder> {
-        @Nonnull
+        @NonNull
         public String getDisplayName() {
             // This descriptor is not intended to be displayed on its own.
             return "";
