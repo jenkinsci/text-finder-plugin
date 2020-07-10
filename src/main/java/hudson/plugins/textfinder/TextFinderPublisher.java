@@ -151,7 +151,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Restricted(NoExternalUse.class)
     public void setSucceedIfFound(boolean succeedIfFound) {
         if (succeedIfFound) {
-            getFirst().setBuildResult(Result.SUCCESS.toString());
+            getFirst().setChangeCondition(TextFinderChangeCondition.MATCH_NOT_FOUND);
         }
     }
 
@@ -159,7 +159,10 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Deprecated
     @Restricted(NoExternalUse.class)
     public void setUnstableIfFound(boolean unstableIfFound) {
-        if (unstableIfFound) {
+        // Versions prior to 1.13 treated NOT_BUILT with higher precedence than UNSTABLE. For
+        // compatibility, maintain the same behavior when migrating settings from these old
+        // versions.
+        if (unstableIfFound && !getFirst().getBuildResult().equals(Result.NOT_BUILT.toString())) {
             getFirst().setBuildResult(Result.UNSTABLE.toString());
         }
     }
@@ -288,12 +291,26 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                                 + "'.");
             }
 
-            if (foundText && !textFinder.getBuildResult().equals(Result.SUCCESS.toString())) {
-                logger.println(
-                        "[Text Finder] Setting build result to '"
-                                + textFinder.getBuildResult()
-                                + "'.");
-                run.setResult(Result.fromString(textFinder.getBuildResult()));
+            Result result = Result.SUCCESS;
+            switch (textFinder.getChangeCondition()) {
+                case MATCH_FOUND:
+                    if (foundText) {
+                        result = Result.fromString(textFinder.getBuildResult());
+                    }
+                    break;
+                case MATCH_NOT_FOUND:
+                    if (!foundText) {
+                        result = Result.fromString(textFinder.getBuildResult());
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unexpected value: " + textFinder.getChangeCondition());
+            }
+
+            if (!result.equals(Result.SUCCESS)) {
+                logger.println("[Text Finder] Setting build result to '" + result + "'.");
+                run.setResult(result);
             }
         } catch (AbortException e) {
             // no test file found

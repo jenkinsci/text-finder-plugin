@@ -6,11 +6,13 @@
   <f:entry field="fileSet" title="${%Files}">
     <f:textbox/>
   </f:entry>
-  <f:entry field="alsoCheckConsoleOutput" title="">
-    <f:checkbox/>
-    <label class="attach-previous">${%Also search the console output}</label>
+  <f:entry field="alsoCheckConsoleOutput">
+    <f:checkbox title="${%Also search the console output}"/>
   </f:entry>
-  <f:entry field="buildResult" title="${%Build result if match found}">
+  <f:entry field="buildResult" title="${%Build result}">
     <f:select default="FAILURE"/>
+  </f:entry>
+  <f:entry title="${%Change condition}" field="changeCondition">
+    <f:enum field="changeCondition">${it.description}</f:enum>
   </f:entry>
 </j:jelly>
