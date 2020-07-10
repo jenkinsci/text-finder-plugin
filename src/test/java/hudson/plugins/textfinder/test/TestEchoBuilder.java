@@ -1,5 +1,7 @@
 package hudson.plugins.textfinder.test;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -15,8 +17,6 @@ import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import javax.annotation.Nonnull;
-
 /** A test {@link Builder} that merely prints the message given to it with a prefix. */
 public class TestEchoBuilder extends Builder implements SimpleBuildStep {
 
@@ -29,10 +29,10 @@ public class TestEchoBuilder extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(
-            @Nonnull Run<?, ?> run,
-            @Nonnull FilePath workspace,
-            @Nonnull Launcher launcher,
-            @Nonnull TaskListener listener) {
+            @NonNull Run<?, ?> run,
+            @NonNull FilePath workspace,
+            @NonNull Launcher launcher,
+            @NonNull TaskListener listener) {
         listener.getLogger().println(message);
     }
 

@@ -1,5 +1,7 @@
 package hudson.plugins.textfinder.test;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -16,8 +18,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
 public class TestWriteFileBuilder extends Builder implements SimpleBuildStep {
 
     private final String file;
@@ -31,10 +31,10 @@ public class TestWriteFileBuilder extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(
-            @Nonnull Run<?, ?> run,
-            @Nonnull FilePath workspace,
-            @Nonnull Launcher launcher,
-            @Nonnull TaskListener listener)
+            @NonNull Run<?, ?> run,
+            @NonNull FilePath workspace,
+            @NonNull Launcher launcher,
+            @NonNull TaskListener listener)
             throws InterruptedException, IOException {
         FilePath filePath = workspace.child(file);
         filePath.write(text, null);
