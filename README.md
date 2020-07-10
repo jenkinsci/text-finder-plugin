@@ -63,6 +63,7 @@ the change condition to `MATCH_NOT_FOUND`:
 
 ```
 findText(textFinders: [textFinder([...], changeCondition: 'MATCH_NOT_FOUND', buildResult: 'UNSTABLE')])
+```
 
 To search for multiple regular expressions, use the following syntax:
 
