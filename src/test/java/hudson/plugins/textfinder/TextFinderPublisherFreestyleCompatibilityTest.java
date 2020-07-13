@@ -1,6 +1,7 @@
 package hudson.plugins.textfinder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import hudson.model.FreeStyleBuild;
@@ -312,5 +313,29 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         assertEquals("out.txt", textFinder.getFileSet());
         assertEquals(Result.UNSTABLE.toString(), textFinder.getBuildResult());
         assertTrue(textFinder.isAlsoCheckConsoleOutput());
+    }
+
+    @LocalData
+    @Test
+    public void persistedConfigurationBeforeChangeCondition() throws Exception {
+        // Local data created using Text Finder 1.13 with the following code:
+        /*
+        FreeStyleProject project = rule.createFreeStyleProject();
+        project.getBuildersList()
+                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
+        textFinder.setFileSet(TestUtils.FILE_SET);
+        project.getPublishersList().add(textFinder);
+        */
+        FreeStyleProject project = rule.jenkins.getItemByFullName("test0", FreeStyleProject.class);
+        assertEquals(1, project.getPublishersList().size());
+        TextFinderPublisher textFinderPublisher =
+                (TextFinderPublisher) project.getPublishersList().get(0);
+        TextFinder textFinder = textFinderPublisher.getTextFinders().get(0);
+        assertEquals(TestUtils.UNIQUE_TEXT, textFinder.getRegexp());
+        assertEquals(TestUtils.FILE_SET, textFinder.getFileSet());
+        assertEquals(Result.FAILURE.toString(), textFinder.getBuildResult());
+        assertEquals(TextFinderChangeCondition.MATCH_FOUND, textFinder.getChangeCondition());
+        assertFalse(textFinder.isAlsoCheckConsoleOutput());
     }
 }
