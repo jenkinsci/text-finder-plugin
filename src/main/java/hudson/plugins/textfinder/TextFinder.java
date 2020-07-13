@@ -105,6 +105,19 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
     }
 
+    /**
+     * Called by XStream after object construction
+     *
+     * @return modified object
+     */
+    protected Object readResolve() {
+        if (changeCondition == null) {
+            changeCondition = TextFinderChangeCondition.MATCH_FOUND;
+        }
+
+        return this;
+    }
+
     @Symbol("textFinder")
     @Extension
     public static class DescriptorImpl extends Descriptor<TextFinder> {
