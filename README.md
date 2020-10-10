@@ -1,10 +1,12 @@
 # Text Finder Plugin
 
-[![Build Status](https://ci.jenkins.io/buildStatus/icon?job=Plugins/text-finder-plugin/master)](https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder/)
-[![GitHub Releases](https://img.shields.io/github/release/jenkinsci/text-finder-plugin.svg?label=changelog)](https://github.com/jenkinsci/text-finder-plugin/releases)
-[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/text-finder.svg?color=blue)](https://plugins.jenkins.io/text-finder/)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=jenkinsci/text-finder-plugin)](https://dependabot.com)
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/)
+[![Contributors](https://img.shields.io/github/contributors/jenkinsci/text-finder-plugin.svg)](https://github.com/jenkinsci/text-finder-plugin/graphs/contributors)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/text-finder.svg)](https://plugins.jenkins.io/text-finder)
+[![GitHub release](https://img.shields.io/github/release/jenkinsci/text-finder-plugin.svg?label=changelog)](https://github.com/jenkinsci/text-finder-plugin/releases/latest)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/text-finder.svg?color=blue)](https://plugins.jenkins.io/text-finder)
+
+## Introduction
 
 This plugin lets you search for some text using regular expressions in a
 set of files or the console log. Based on the outcome, you can downgrade
@@ -15,7 +17,7 @@ files. If a match is found, you can downgrade the build result from
 `SUCCESS` to `FAILURE`. This is handy when you have some tools in your
 build chain that do not properly set the exit code.
 
-## Usage
+## Getting started
 
 ### [Pipeline](https://jenkins.io/doc/book/pipeline/) jobs
 
@@ -124,3 +126,11 @@ job('example') {
   }
 }
 ```
+
+## Issues
+
+Report issues and enhancements in the [Jenkins issue tracker](https://issues.jenkins-ci.org/).
+
+## Contributing
+
+Refer to our [contribution guidelines](https://github.com/jenkinsci/.github/blob/master/CONTRIBUTING.md).
