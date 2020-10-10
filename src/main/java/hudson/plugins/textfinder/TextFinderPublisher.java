@@ -263,7 +263,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             if (textFinder.isAlsoCheckConsoleOutput()) {
                 // Do not mention the pattern we are looking for to avoid false positives
                 logger.println("[Text Finder] Searching console output...");
-                foundText |=
+                foundText =
                         checkConsole(run, compilePattern(logger, textFinder.getRegexp()), logger);
                 logger.println(
                         "[Text Finder] Finished searching for pattern '"
