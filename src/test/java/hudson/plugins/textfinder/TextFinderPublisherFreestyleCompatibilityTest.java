@@ -317,7 +317,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
 
     @LocalData
     @Test
-    public void persistedConfigurationBeforeChangeCondition() throws Exception {
+    public void persistedConfigurationBeforeChangeCondition() {
         // Local data created using Text Finder 1.13 with the following code:
         /*
         FreeStyleProject project = rule.createFreeStyleProject();
