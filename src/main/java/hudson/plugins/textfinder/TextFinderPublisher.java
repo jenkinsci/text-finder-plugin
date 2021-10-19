@@ -399,6 +399,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Symbol("findText")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.TextFinderPublisher_DisplayName();
