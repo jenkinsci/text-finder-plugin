@@ -17,6 +17,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -133,6 +134,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
          * @param value The expression to check
          * @return The form validation result
          */
+        @POST
         public FormValidation doCheckRegexp(@QueryParameter String value) {
             if (Util.fixEmptyAndTrim(value) == null) {
                 // not entered yet
@@ -147,6 +149,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
             }
         }
 
+        @POST
         public ListBoxModel doFillBuildResultItems() {
             ListBoxModel r = new ListBoxModel();
             for (Result result :
