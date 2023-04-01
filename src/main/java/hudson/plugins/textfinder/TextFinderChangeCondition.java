@@ -1,7 +1,6 @@
 package hudson.plugins.textfinder;
 
 import hudson.util.EnumConverter;
-
 import org.kohsuke.stapler.Stapler;
 
 public enum TextFinderChangeCondition {

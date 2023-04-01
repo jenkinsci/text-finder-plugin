@@ -6,30 +6,27 @@ import static org.junit.Assert.assertTrue;
 import com.gargoylesoftware.htmlunit.WebClientUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.textfinder.test.TestEchoBuilder;
 import hudson.plugins.textfinder.test.TestWriteFileBuilder;
-
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-
 public class TextFinderPublisherFreestyleTest {
 
-    @Rule public JenkinsRule rule = new JenkinsRule();
+    @Rule
+    public JenkinsRule rule = new JenkinsRule();
 
     @Test
     public void successIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setBuildResult(Result.SUCCESS.toString());
@@ -45,10 +42,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -61,8 +55,7 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void failureIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         TextFinderPublisher textFinderPublisher = new TextFinderPublisher();
@@ -77,10 +70,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -94,8 +84,7 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void unstableIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setBuildResult(Result.UNSTABLE.toString());
@@ -111,10 +100,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -128,8 +114,7 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void notBuiltIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setBuildResult(Result.NOT_BUILT.toString());
@@ -145,10 +130,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -162,8 +144,7 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void abortedIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setBuildResult(Result.ABORTED.toString());
@@ -179,10 +160,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -250,8 +228,7 @@ public class TextFinderPublisherFreestyleTest {
     @Test
     public void multipleTextFindersInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder tf1 = new TextFinder(TestUtils.UNIQUE_TEXT);
         tf1.setFileSet(TestUtils.FILE_SET);
         tf1.setBuildResult(Result.SUCCESS.toString());
@@ -272,10 +249,7 @@ public class TextFinderPublisherFreestyleTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -301,8 +275,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
     }
 
     @Test
@@ -318,8 +291,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
@@ -337,8 +309,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
@@ -356,8 +327,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'NOT_BUILT'.", build);
     }
 
@@ -375,8 +345,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'ABORTED'.", build);
     }
 
@@ -391,8 +360,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
     }
 
     @Test
@@ -407,8 +375,7 @@ public class TextFinderPublisherFreestyleTest {
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
@@ -432,8 +399,7 @@ public class TextFinderPublisherFreestyleTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
         rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
@@ -458,8 +424,7 @@ public class TextFinderPublisherFreestyleTest {
         // Configure the Text Finder.
         config.getInputByName("_.fileSet").setValueAttribute("file1");
         config.getInputByName("_.regexp").setValueAttribute(TestUtils.UNIQUE_TEXT);
-        config.getSelectByName("_.buildResult")
-                .setSelectedAttribute(Result.UNSTABLE.toString(), true);
+        config.getSelectByName("_.buildResult").setSelectedAttribute(Result.UNSTABLE.toString(), true);
         config.getInputByName("_.alsoCheckConsoleOutput").click();
 
         // Submit the page.

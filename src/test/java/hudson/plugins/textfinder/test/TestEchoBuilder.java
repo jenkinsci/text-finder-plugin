@@ -1,7 +1,6 @@
 package hudson.plugins.textfinder.test;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,9 +10,7 @@ import hudson.model.TaskListener;
 import hudson.plugins.textfinder.TestUtils;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-
 import jenkins.tasks.SimpleBuildStep;
-
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
