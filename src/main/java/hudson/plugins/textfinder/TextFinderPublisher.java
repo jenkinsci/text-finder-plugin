@@ -1,7 +1,6 @@
 package hudson.plugins.textfinder;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Functions;
@@ -17,20 +16,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-
-import jenkins.MasterToSlaveFileCallable;
-import jenkins.tasks.SimpleBuildStep;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.FileSet;
-import org.jenkinsci.Symbol;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.DoNotUse;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +32,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import jenkins.MasterToSlaveFileCallable;
+import jenkins.tasks.SimpleBuildStep;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.FileSet;
+import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Text Finder plugin for Jenkins. Search in the workspace using a regular expression and determine
@@ -56,7 +52,8 @@ import java.util.regex.PatternSyntaxException;
  */
 public class TextFinderPublisher extends Recorder implements Serializable, SimpleBuildStep {
 
-    @NonNull private List<TextFinder> textFinders;
+    @NonNull
+    private List<TextFinder> textFinders;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
@@ -253,8 +250,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     /** Indicates an orderly abortion of the processing. */
     private static final class AbortException extends RuntimeException {}
 
-    private static void findText(
-            TextFinder textFinder, Run<?, ?> run, FilePath workspace, TaskListener listener)
+    private static void findText(TextFinder textFinder, Run<?, ?> run, FilePath workspace, TaskListener listener)
             throws IOException, InterruptedException {
         try {
             PrintStream logger = listener.getLogger();
@@ -263,32 +259,25 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             if (textFinder.isAlsoCheckConsoleOutput()) {
                 // Do not mention the pattern we are looking for to avoid false positives
                 logger.println("[Text Finder] Searching console output...");
-                foundText =
-                        checkConsole(run, compilePattern(logger, textFinder.getRegexp()), logger);
-                logger.println(
-                        "[Text Finder] Finished searching for pattern '"
-                                + textFinder.getRegexp()
-                                + "' in console output.");
+                foundText = checkConsole(run, compilePattern(logger, textFinder.getRegexp()), logger);
+                logger.println("[Text Finder] Finished searching for pattern '"
+                        + textFinder.getRegexp()
+                        + "' in console output.");
             }
 
             if (textFinder.getFileSet() != null) {
-                logger.println(
-                        "[Text Finder] Searching for pattern '"
-                                + textFinder.getRegexp()
-                                + "' in file set '"
-                                + textFinder.getFileSet()
-                                + "'...");
+                logger.println("[Text Finder] Searching for pattern '"
+                        + textFinder.getRegexp()
+                        + "' in file set '"
+                        + textFinder.getFileSet()
+                        + "'...");
                 RemoteOutputStream ros = new RemoteOutputStream(logger);
-                foundText |=
-                        workspace.act(
-                                new FileChecker(
-                                        ros, textFinder.getFileSet(), textFinder.getRegexp()));
-                logger.println(
-                        "[Text Finder] Finished searching for pattern '"
-                                + textFinder.getRegexp()
-                                + "' in file set '"
-                                + textFinder.getFileSet()
-                                + "'.");
+                foundText |= workspace.act(new FileChecker(ros, textFinder.getFileSet(), textFinder.getRegexp()));
+                logger.println("[Text Finder] Finished searching for pattern '"
+                        + textFinder.getRegexp()
+                        + "' in file set '"
+                        + textFinder.getFileSet()
+                        + "'.");
             }
 
             Result result = Result.SUCCESS;
@@ -304,8 +293,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     }
                     break;
                 default:
-                    throw new IllegalStateException(
-                            "Unexpected value: " + textFinder.getChangeCondition());
+                    throw new IllegalStateException("Unexpected value: " + textFinder.getChangeCondition());
             }
 
             if (!result.equals(Result.SUCCESS)) {
@@ -324,8 +312,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
      * @param isConsoleLog True if the reader represents a console log (as opposed to a file).
      */
     private static boolean checkPattern(
-            Reader r, Pattern pattern, PrintStream logger, String header, boolean isConsoleLog)
-            throws IOException {
+            Reader r, Pattern pattern, PrintStream logger, String header, boolean isConsoleLog) throws IOException {
         boolean logFilename = true;
         boolean foundText = false;
         try (BufferedReader reader = new BufferedReader(r)) {
@@ -430,7 +417,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
         @Override
         public Boolean invoke(File ws, VirtualChannel channel) throws IOException {
-            PrintStream logger = new PrintStream(ros, true, Charset.defaultCharset().toString());
+            PrintStream logger =
+                    new PrintStream(ros, true, Charset.defaultCharset().toString());
 
             // Collect list of files for searching
             FileSet fs = new FileSet();

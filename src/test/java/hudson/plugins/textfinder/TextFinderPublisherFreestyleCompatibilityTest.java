@@ -9,24 +9,22 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.textfinder.test.TestEchoBuilder;
 import hudson.plugins.textfinder.test.TestWriteFileBuilder;
-
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.recipes.LocalData;
 
-import java.io.File;
-
 @SuppressWarnings("deprecation")
 public class TextFinderPublisherFreestyleCompatibilityTest {
 
-    @Rule public JenkinsRule rule = new JenkinsRule();
+    @Rule
+    public JenkinsRule rule = new JenkinsRule();
 
     @Test
     public void successIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setSucceedIfFound(true);
@@ -40,10 +38,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -56,8 +51,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     @Test
     public void failureIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         project.getPublishersList().add(textFinder);
@@ -70,10 +64,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -87,8 +78,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     @Test
     public void unstableIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setUnstableIfFound(true);
@@ -102,10 +92,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -119,8 +106,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     @Test
     public void notBuiltIfFoundInFile() throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
-        project.getBuildersList()
-                .add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
+        project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setFileSet(TestUtils.FILE_SET);
         textFinder.setNotBuiltIfFound(true);
@@ -134,10 +120,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
                         + "'.",
                 build);
         TestUtils.assertFileContainsMatch(
-                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET),
-                TestUtils.UNIQUE_TEXT,
-                rule,
-                build);
+                new File(build.getWorkspace().getRemote(), TestUtils.FILE_SET), TestUtils.UNIQUE_TEXT, rule, build);
         rule.assertLogContains(
                 "[Text Finder] Finished searching for pattern '"
                         + TestUtils.UNIQUE_TEXT
@@ -210,8 +193,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
     }
 
     @Test
@@ -225,8 +207,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 
@@ -242,8 +223,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
@@ -259,8 +239,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'NOT_BUILT'.", build);
     }
 
@@ -273,8 +252,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
     }
 
     @Test
@@ -287,8 +265,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
-                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.",
-                build);
+                "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
     }
 

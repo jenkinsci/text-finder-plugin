@@ -2,7 +2,6 @@ package hudson.plugins.textfinder.test;
 
 import hudson.Extension;
 import hudson.plugins.textfinder.TestUtils;
-
 import org.jenkinsci.plugins.workflow.steps.EchoStep;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.kohsuke.stapler.DataBoundConstructor;

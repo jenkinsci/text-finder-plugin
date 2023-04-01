@@ -1,7 +1,6 @@
 package hudson.plugins.textfinder.test;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -10,13 +9,10 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-
+import java.io.IOException;
 import jenkins.tasks.SimpleBuildStep;
-
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import java.io.IOException;
 
 public class TestWriteFileBuilder extends Builder implements SimpleBuildStep {
 

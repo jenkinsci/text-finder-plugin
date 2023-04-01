@@ -2,7 +2,6 @@ package hudson.plugins.textfinder;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
@@ -10,7 +9,11 @@ import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -18,17 +21,17 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 public class TextFinder extends AbstractDescribableImpl<TextFinder> implements Serializable {
 
-    @NonNull private /* final */ String regexp;
-    @CheckForNull private String fileSet;
-    @NonNull private String buildResult = Result.FAILURE.toString();
+    @NonNull
+    private /* final */ String regexp;
+
+    @CheckForNull
+    private String fileSet;
+
+    @NonNull
+    private String buildResult = Result.FAILURE.toString();
+
     private TextFinderChangeCondition changeCondition = TextFinderChangeCondition.MATCH_FOUND;
     private boolean alsoCheckConsoleOutput;
 
@@ -73,11 +76,10 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
         }
 
         if (!buildResult.equalsIgnoreCase(Result.fromString(buildResult).toString())) {
-            throw new IllegalArgumentException(
-                    "buildResult is invalid: "
-                            + buildResult
-                            + ". Valid options are SUCCESS, UNSTABLE, FAILURE, NOT_BUILT and"
-                            + " ABORTED.");
+            throw new IllegalArgumentException("buildResult is invalid: "
+                    + buildResult
+                    + ". Valid options are SUCCESS, UNSTABLE, FAILURE, NOT_BUILT and"
+                    + " ABORTED.");
         }
 
         this.buildResult = buildResult;
@@ -152,12 +154,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
         public ListBoxModel doFillBuildResultItems() {
             ListBoxModel r = new ListBoxModel();
             for (Result result :
-                    Arrays.asList(
-                            Result.SUCCESS,
-                            Result.UNSTABLE,
-                            Result.FAILURE,
-                            Result.NOT_BUILT,
-                            Result.ABORTED)) {
+                    Arrays.asList(Result.SUCCESS, Result.UNSTABLE, Result.FAILURE, Result.NOT_BUILT, Result.ABORTED)) {
                 r.add(result.toString());
             }
             return r;
