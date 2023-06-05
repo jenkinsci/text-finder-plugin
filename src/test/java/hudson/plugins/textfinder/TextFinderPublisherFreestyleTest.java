@@ -3,9 +3,6 @@ package hudson.plugins.textfinder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.gargoylesoftware.htmlunit.WebClientUtil;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -14,6 +11,9 @@ import hudson.plugins.textfinder.test.TestWriteFileBuilder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import org.htmlunit.WebClientUtil;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlPage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -422,8 +422,8 @@ public class TextFinderPublisherFreestyleTest {
         WebClientUtil.waitForJSExec(page.getWebClient());
 
         // Configure the Text Finder.
-        config.getInputByName("_.fileSet").setValueAttribute("file1");
-        config.getInputByName("_.regexp").setValueAttribute(TestUtils.UNIQUE_TEXT);
+        config.getInputByName("_.fileSet").setValue("file1");
+        config.getInputByName("_.regexp").setValue(TestUtils.UNIQUE_TEXT);
         config.getSelectByName("_.buildResult").setSelectedAttribute(Result.UNSTABLE.toString(), true);
         config.getInputByName("_.alsoCheckConsoleOutput").click();
 
