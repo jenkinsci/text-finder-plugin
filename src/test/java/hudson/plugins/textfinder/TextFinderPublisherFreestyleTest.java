@@ -420,7 +420,8 @@ public class TextFinderPublisherFreestyleTest {
         try {
             page.getAnchorByText(Messages.TextFinderPublisher_DisplayName()).click();
         } catch (ElementNotFoundException enf) {
-            rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName()).click();
+            rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName())
+                    .click();
         }
 
         // Wait for the YUI JavaScript to load.
