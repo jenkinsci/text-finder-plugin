@@ -11,6 +11,7 @@ import hudson.plugins.textfinder.test.TestWriteFileBuilder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.WebClientUtil;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
@@ -416,7 +417,11 @@ public class TextFinderPublisherFreestyleTest {
         // Add a Text Finder.
         HtmlForm config = page.getFormByName("config");
         rule.getButtonByCaption(config, "Add post-build action").click();
-        page.getAnchorByText(Messages.TextFinderPublisher_DisplayName()).click();
+        try {
+            page.getAnchorByText(Messages.TextFinderPublisher_DisplayName()).click();
+        } catch (ElementNotFoundException enf) {
+            rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName()).click();
+        }
 
         // Wait for the YUI JavaScript to load.
         WebClientUtil.waitForJSExec(page.getWebClient());

@@ -45,7 +45,7 @@
   <properties>
     <revision>1.26</revision>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.361.4</jenkins.version>
+    <jenkins.version>2.421-rc34142.a_a_f477743b_3f</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
