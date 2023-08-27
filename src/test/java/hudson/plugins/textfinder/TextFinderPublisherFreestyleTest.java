@@ -8,9 +8,11 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.textfinder.test.TestEchoBuilder;
 import hudson.plugins.textfinder.test.TestWriteFileBuilder;
+import hudson.util.VersionNumber;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import jenkins.model.Jenkins;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.WebClientUtil;
 import org.htmlunit.html.HtmlForm;
@@ -417,9 +419,9 @@ public class TextFinderPublisherFreestyleTest {
         // Add a Text Finder.
         HtmlForm config = page.getFormByName("config");
         rule.getButtonByCaption(config, "Add post-build action").click();
-        try {
+        if (Jenkins.getVersion().isOlderThan(new VersionNumber("2.422"))) {
             page.getAnchorByText(Messages.TextFinderPublisher_DisplayName()).click();
-        } catch (ElementNotFoundException enf) {
+        } else {
             rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName())
                     .click();
         }
