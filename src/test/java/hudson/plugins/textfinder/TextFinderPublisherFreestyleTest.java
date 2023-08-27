@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import jenkins.model.Jenkins;
-import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.WebClientUtil;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
