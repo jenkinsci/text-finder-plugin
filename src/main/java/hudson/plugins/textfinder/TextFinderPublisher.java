@@ -1,6 +1,7 @@
 package hudson.plugins.textfinder;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Functions;
@@ -57,27 +58,33 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
 
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient String fileSet;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient String regexp;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient boolean succeedIfFound;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient boolean unstableIfFound;
 
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient boolean notBuiltIfFound;
 
     /** True to also scan the whole console output */
     @Deprecated
     @Restricted(NoExternalUse.class)
+    @SuppressFBWarnings(value = "PA_PUBLIC_PRIMITIVE_ATTRIBUTE", justification = "Preserve API compatibility.")
     public transient boolean alsoCheckConsoleOutput;
 
     /** Used only by Stapler in the snippetizer. */
