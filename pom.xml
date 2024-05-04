@@ -47,6 +47,7 @@
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.387.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+    <project.build.outputTimestamp>2023-01-01T00:00:00Z</project.build.outputTimestamp>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
