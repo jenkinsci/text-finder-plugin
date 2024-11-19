@@ -1,8 +1,6 @@
-# Jenkins Security Scan
-# For more information, see: https://www.jenkins.io/doc/developer/security/scan/
+# More information about the Jenkins security scan can be found at the developer docs: https://www.jenkins.io/redirect/jenkins-security-scan/
 ---
 name: Jenkins Security Scan
-
 on:
   push:
     branches:
