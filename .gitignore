@@ -1,4 +1,5 @@
 target
+build
 
 # mvn hpi:run
 work
@@ -8,6 +9,9 @@ work
 *.iws
 *.ipr
 .idea
+
+# Gradle files
+.gradle
 
 # Eclipse project files
 .settings
