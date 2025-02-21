@@ -3,6 +3,9 @@
   <f:entry field="regexp" title="${%Regular expression}">
     <f:textbox/>
   </f:entry>
+  <f:entry field="buildId" title="${%Display name regular expression}">
+    <f:textbox/>
+  </f:entry>
   <f:entry field="fileSet" title="${%Files}">
     <f:textbox/>
   </f:entry>

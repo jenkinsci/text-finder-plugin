@@ -1,0 +1,18 @@
+<div>
+    Specify a regular expression using the syntax supported by the Java <a href='https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html'>Pattern</a> class to find future display name of this job.<br/>
+    If <b>"your_regex.*"</b> matches the line, then <b>"your_regex"</b> will be removed from the line and the rest of it wll be set as displayName of build.<br/>
+    Last found is served and is affected by search termination from main "Regular expression". Warning, spaces meter!<br/>
+    eg:<br/>
+    build id declaration:<br/>
+    <pre>
+        `Version: `
+    </pre>
+    log:<br/>
+    <pre>
+        Version: 15.25.alpha-pre5
+    </pre>
+    set display name of run:<br/>
+    <pre>
+        15.25.alpha-pre5
+    </pre>
+</div>
