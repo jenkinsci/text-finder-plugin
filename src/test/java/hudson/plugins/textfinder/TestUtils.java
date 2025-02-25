@@ -19,6 +19,12 @@ public class TestUtils {
     public static final String PREFIX = ">>> ";
     public static final String UNIQUE_TEXT = "foobar";
 
+    public static final String SUPER_ID = "superId";
+    public static final String SUPER_ID_KEY = "future name: ";
+    public static final String SUPER_ID_LINE = SUPER_ID_KEY + SUPER_ID;
+    public static final String ECHO_ID = "echo " + SUPER_ID_LINE;
+    public static final String ECHO_UNIQUE_TEXT = "echo " + UNIQUE_TEXT;
+
     public static void assertFileContainsMatch(File file, String text, JenkinsRule rule, Run<?, ?> build)
             throws IOException {
         rule.assertLogContains(String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
