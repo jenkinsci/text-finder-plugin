@@ -5,6 +5,7 @@ import java.io.File;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -477,5 +478,42 @@ public class TextFinderPublisherPipelineTest {
                 "Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output.", build);
         rule.assertLogContains("Setting build result to 'FAILURE'.", build);
         rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
+    }
+
+    @Test
+    public void unstableIfFoundInConsoleWithFutureDisplayName() throws Exception {
+        WorkflowJob project = rule.createProject(WorkflowJob.class);
+        project.setDefinition(new CpsFlowDefinition(
+                "node {\n"
+                        + "  isUnix() ? sh('"
+                        + TestUtils.ECHO_ID
+                        + ";"
+                        + TestUtils.ECHO_UNIQUE_TEXT
+                        + ";"
+                        + "') : bat(\"prompt \\$G\\r\\n"
+                        + TestUtils.ECHO_ID
+                        + "\\r\\n"
+                        + TestUtils.ECHO_UNIQUE_TEXT
+                        + "\\r\\n"
+                        + "\")\n"
+                        + "   findText(textFinders: [textFinder(regexp: '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "', buildId: '"
+                        + "^"
+                        + TestUtils.SUPER_ID_KEY
+                        + "', buildResult: 'UNSTABLE',, alsoCheckConsoleOutput: true\n"
+                        + ")])}\n",
+                true));
+        WorkflowRun build = project.scheduleBuild2(0).get();
+        rule.waitForCompletion(build);
+        rule.assertLogContains("[Text Finder] Searching console output...", build);
+        rule.assertLogContains("[Text Finder] Found future buildId line: '" + TestUtils.SUPER_ID_LINE + "'", build);
+        rule.assertLogContains("[Text Finder] Leading to buildId of: '" + TestUtils.SUPER_ID + "'", build);
+        rule.assertLogContains(
+                "[Text Finder] Finished searching for pattern '" + TestUtils.UNIQUE_TEXT + "' in console output",
+                build);
+        rule.assertLogContains(TestUtils.ECHO_UNIQUE_TEXT, build);
+        Assert.assertEquals(TestUtils.SUPER_ID, build.getDisplayName());
+        rule.assertBuildStatus(Result.UNSTABLE, build);
     }
 }
