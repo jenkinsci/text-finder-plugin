@@ -492,9 +492,9 @@ public class TextFinderPublisherPipelineTest {
                         + ";"
                         + "') : bat(\"prompt \\$G\\r\\n"
                         + TestUtils.ECHO_ID
-                        + ";"
+                        + "\\r\\n"
                         + TestUtils.ECHO_UNIQUE_TEXT
-                        + ";"
+                        + "\\r\\n"
                         + "\")\n"
                         + "   findText(textFinders: [textFinder(regexp: '"
                         + TestUtils.UNIQUE_TEXT
