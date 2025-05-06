@@ -5,42 +5,42 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import java.io.File;
 import javaposse.jobdsl.plugin.ExecuteDslScripts;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TextFinderPublisherFreestyleJobDslTest {
-
-    @Rule
-    public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class TextFinderPublisherFreestyleJobDslTest {
 
     @Test
-    public void successIfFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "          fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "          buildResult 'SUCCESS'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void successIfFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "          fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "          buildResult 'SUCCESS'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -61,31 +61,33 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void failureIfFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void failureIfFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -107,32 +109,34 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void unstableIfFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      buildResult 'UNSTABLE'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void unstableIfFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      buildResult 'UNSTABLE'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -154,32 +158,34 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void notBuiltIfFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      buildResult 'NOT_BUILT'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void notBuiltIfFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      buildResult 'NOT_BUILT'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -201,32 +207,34 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void abortedIfFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      buildResult 'ABORTED'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void abortedIfFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      buildResult 'ABORTED'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.ABORTED, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -248,49 +256,51 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void multipleTextFindersInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      buildResult 'SUCCESS'\n"
-                + "        }\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "        }\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      buildResult 'UNSTABLE'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void multipleTextFindersInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      buildResult 'SUCCESS'\n"
+                        + "        }\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "        }\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      buildResult 'UNSTABLE'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -313,29 +323,31 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void successIfNotFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text 'foobaz'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void successIfNotFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text 'foobaz'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -354,30 +366,32 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void failureIfNotFoundInFile() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testWriteFileBuilder {\n"
-                + "      file '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      text 'foobaz'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      fileSet '"
-                + TestUtils.FILE_SET
-                + "'\n"
-                + "      changeCondition 'MATCH_NOT_FOUND'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void failureIfNotFoundInFile(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testWriteFileBuilder {\n"
+                        + "      file '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      text 'foobaz'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      fileSet '"
+                        + TestUtils.FILE_SET
+                        + "'\n"
+                        + "      changeCondition 'MATCH_NOT_FOUND'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(
                 "[Text Finder] Searching for pattern '"
@@ -397,27 +411,29 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void successIfFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'SUCCESS'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void successIfFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'SUCCESS'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
@@ -426,26 +442,28 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void failureIfFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void failureIfFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
@@ -455,27 +473,29 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void unstableIfFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'UNSTABLE'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void unstableIfFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'UNSTABLE'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.UNSTABLE, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
@@ -485,27 +505,29 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void notBuiltIfFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'NOT_BUILT'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void notBuiltIfFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'NOT_BUILT'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.NOT_BUILT, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
@@ -515,27 +537,29 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void abortedIfFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'ABORTED'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void abortedIfFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'ABORTED'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.ABORTED, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
@@ -545,19 +569,21 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void successIfNotFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void successIfNotFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertSuccess(project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
@@ -565,20 +591,22 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void failureIfNotFoundInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "      changeCondition 'MATCH_NOT_FOUND'\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void failureIfNotFoundInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "      changeCondition 'MATCH_NOT_FOUND'\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
         rule.assertLogContains(
@@ -587,40 +615,42 @@ public class TextFinderPublisherFreestyleJobDslTest {
     }
 
     @Test
-    public void multipleTextFindersInConsole() throws Exception {
-        FreeStyleProject project = createProjectFromDsl("  steps {\n"
-                + "    testEchoBuilder {\n"
-                + "      message '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "    }\n"
-                + "  }\n"
-                + "  publishers {\n"
-                + "    findText {\n"
-                + "      textFinders {\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'SUCCESS'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "        textFinder {\n"
-                + "          regexp '"
-                + TestUtils.UNIQUE_TEXT
-                + "'\n"
-                + "      buildResult 'UNSTABLE'\n"
-                + "      alsoCheckConsoleOutput true\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n");
+    void multipleTextFindersInConsole(JenkinsRule rule) throws Exception {
+        FreeStyleProject project = createProjectFromDsl(
+                rule,
+                "  steps {\n"
+                        + "    testEchoBuilder {\n"
+                        + "      message '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "    }\n"
+                        + "  }\n"
+                        + "  publishers {\n"
+                        + "    findText {\n"
+                        + "      textFinders {\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'SUCCESS'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "        textFinder {\n"
+                        + "          regexp '"
+                        + TestUtils.UNIQUE_TEXT
+                        + "'\n"
+                        + "      buildResult 'UNSTABLE'\n"
+                        + "      alsoCheckConsoleOutput true\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  }\n");
         FreeStyleBuild build = rule.buildAndAssertStatus(Result.FAILURE, project);
         rule.assertLogContains(TestUtils.PREFIX + TestUtils.UNIQUE_TEXT, build);
         rule.assertLogContains("[Text Finder] Searching console output...", build);
@@ -631,7 +661,7 @@ public class TextFinderPublisherFreestyleJobDslTest {
         rule.assertLogContains("Setting build result to 'UNSTABLE'.", build);
     }
 
-    private FreeStyleProject createProjectFromDsl(String dsl) throws Exception {
+    private static FreeStyleProject createProjectFromDsl(JenkinsRule rule, String dsl) throws Exception {
         FreeStyleProject seed = rule.createFreeStyleProject();
         ExecuteDslScripts executeDslScripts = new ExecuteDslScripts();
         String generatedJobName = "test" + rule.jenkins.getItems().size();
