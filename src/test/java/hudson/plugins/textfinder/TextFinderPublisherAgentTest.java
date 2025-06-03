@@ -6,17 +6,15 @@ import java.io.File;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TextFinderPublisherAgentTest {
-
-    @Rule
-    public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class TextFinderPublisherAgentTest {
 
     @Test
-    public void failureIfFoundInFileOnAgent() throws Exception {
+    void failureIfFoundInFileOnAgent(JenkinsRule rule) throws Exception {
         DumbSlave agent = rule.createOnlineSlave();
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
@@ -52,7 +50,7 @@ public class TextFinderPublisherAgentTest {
     }
 
     @Test
-    public void failureIfFoundInConsoleOnAgent() throws Exception {
+    void failureIfFoundInConsoleOnAgent(JenkinsRule rule) throws Exception {
         DumbSlave agent = rule.createOnlineSlave();
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
