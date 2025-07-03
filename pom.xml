@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>text-finder</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.32</version>
   <packaging>hpi</packaging>
   <name>Text Finder</name>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
@@ -38,7 +38,7 @@
   <scm>
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>text-finder-1.32</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
@@ -49,7 +49,7 @@
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <project.build.outputTimestamp>2024-10-30T18:43:10Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-07-03T23:03:21Z</project.build.outputTimestamp>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
