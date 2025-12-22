@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>5.28</version>
+    <version>5.2098.v4d48a_c4c68e7</version>
     <relativePath />
   </parent>
 
@@ -52,6 +52,7 @@
     <project.build.outputTimestamp>2025-09-08T20:07:52Z</project.build.outputTimestamp>
     <spotless.check.skip>false</spotless.check.skip>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
+    <jenkins-test-harness.version>2538.v73b_4877782c9</jenkins-test-harness.version>
   </properties>
 
   <dependencyManagement>
