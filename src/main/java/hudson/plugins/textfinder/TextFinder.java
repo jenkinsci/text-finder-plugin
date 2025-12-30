@@ -34,10 +34,16 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
 
     private TextFinderChangeCondition changeCondition = TextFinderChangeCondition.MATCH_FOUND;
     private boolean alsoCheckConsoleOutput;
+    private String buildId = null;
 
     @Restricted(NoExternalUse.class)
     public String getRegexp() {
         return regexp;
+    }
+
+    @Restricted(NoExternalUse.class)
+    public String getBuildId() {
+        return buildId;
     }
 
     @DataBoundConstructor
@@ -50,6 +56,12 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
     @Restricted(NoExternalUse.class)
     void setRegexp(String regexp) {
         this.regexp = Objects.requireNonNull(regexp);
+    }
+
+    @DataBoundSetter
+    @Restricted(NoExternalUse.class)
+    public void setBuildId(String buildId) {
+        this.buildId = buildId;
     }
 
     @Restricted(NoExternalUse.class)
