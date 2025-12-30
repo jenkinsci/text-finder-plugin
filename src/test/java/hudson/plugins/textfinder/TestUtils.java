@@ -1,6 +1,6 @@
 package hudson.plugins.textfinder;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import hudson.model.Run;
 import java.io.File;
@@ -21,7 +21,7 @@ public class TestUtils {
 
     public static void assertFileContainsMatch(File file, String text, JenkinsRule rule, Run<?, ?> build)
             throws IOException {
-        rule.assertLogContains(String.format("%s:%s%s", file, System.getProperty("line.separator"), text), build);
+        rule.assertLogContains(String.format("%s:%s%s", file, System.lineSeparator(), text), build);
     }
 
     public static File getWorkspace(WorkflowRun build) {

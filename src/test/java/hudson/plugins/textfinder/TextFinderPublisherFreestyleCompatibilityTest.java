@@ -1,8 +1,8 @@
 package hudson.plugins.textfinder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -10,19 +10,17 @@ import hudson.model.Result;
 import hudson.plugins.textfinder.test.TestEchoBuilder;
 import hudson.plugins.textfinder.test.TestWriteFileBuilder;
 import java.io.File;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.jvnet.hudson.test.recipes.LocalData;
 
 @SuppressWarnings("deprecation")
-public class TextFinderPublisherFreestyleCompatibilityTest {
-
-    @Rule
-    public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class TextFinderPublisherFreestyleCompatibilityTest {
 
     @Test
-    public void successIfFoundInFile() throws Exception {
+    void successIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -49,7 +47,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void failureIfFoundInFile() throws Exception {
+    void failureIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -76,7 +74,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void unstableIfFoundInFile() throws Exception {
+    void unstableIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -104,7 +102,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void notBuiltIfFoundInFile() throws Exception {
+    void notBuiltIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -132,7 +130,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void successIfNotFoundInFile() throws Exception {
+    void successIfNotFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -156,7 +154,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void failureIfNotFoundInFile() throws Exception {
+    void failureIfNotFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -182,7 +180,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void successIfFoundInConsole() throws Exception {
+    void successIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -197,7 +195,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void failureIfFoundInConsole() throws Exception {
+    void failureIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -212,7 +210,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void unstableIfFoundInConsole() throws Exception {
+    void unstableIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -228,7 +226,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void notBuiltIfFoundInConsole() throws Exception {
+    void notBuiltIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
@@ -244,7 +242,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void successIfNotFoundInConsole() throws Exception {
+    void successIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
@@ -256,7 +254,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
     }
 
     @Test
-    public void failureIfNotFoundInConsole() throws Exception {
+    void failureIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         TextFinderPublisher textFinder = new TextFinderPublisher(TestUtils.UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
@@ -271,7 +269,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
 
     @LocalData
     @Test
-    public void persistedConfigurationBeforeMultipleFinders() {
+    void persistedConfigurationBeforeMultipleFinders(JenkinsRule rule) {
         // Local data created using Text Finder 1.12 with the following code:
         /*
         FreeStyleProject project = rule.createFreeStyleProject();
@@ -294,7 +292,7 @@ public class TextFinderPublisherFreestyleCompatibilityTest {
 
     @LocalData
     @Test
-    public void persistedConfigurationBeforeChangeCondition() {
+    void persistedConfigurationBeforeChangeCondition(JenkinsRule rule) {
         // Local data created using Text Finder 1.13 with the following code:
         /*
         FreeStyleProject project = rule.createFreeStyleProject();
