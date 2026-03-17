@@ -1,7 +1,7 @@
 package hudson.plugins.textfinder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -16,17 +16,15 @@ import jenkins.model.Jenkins;
 import org.htmlunit.WebClientUtil;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TextFinderPublisherFreestyleTest {
-
-    @Rule
-    public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class TextFinderPublisherFreestyleTest {
 
     @Test
-    public void successIfFoundInFile() throws Exception {
+    void successIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -55,7 +53,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void failureIfFoundInFile() throws Exception {
+    void failureIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -84,7 +82,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void unstableIfFoundInFile() throws Exception {
+    void unstableIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -114,7 +112,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void notBuiltIfFoundInFile() throws Exception {
+    void notBuiltIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -144,7 +142,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void abortedIfFoundInFile() throws Exception {
+    void abortedIfFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -174,7 +172,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void successIfNotFoundInFile() throws Exception {
+    void successIfNotFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -200,7 +198,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void failureIfNotFoundInFile() throws Exception {
+    void failureIfNotFoundInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, "foobaz"));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -228,7 +226,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void multipleTextFindersInFile() throws Exception {
+    void multipleTextFindersInFile(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestWriteFileBuilder(TestUtils.FILE_SET, TestUtils.UNIQUE_TEXT));
         TextFinder tf1 = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -264,7 +262,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void successIfFoundInConsole() throws Exception {
+    void successIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -281,7 +279,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void failureIfFoundInConsole() throws Exception {
+    void failureIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -298,7 +296,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void unstableIfFoundInConsole() throws Exception {
+    void unstableIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -316,7 +314,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void notBuiltIfFoundInConsole() throws Exception {
+    void notBuiltIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -334,7 +332,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void abortedIfFoundInConsole() throws Exception {
+    void abortedIfFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -352,7 +350,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void successIfNotFoundInConsole() throws Exception {
+    void successIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
@@ -366,7 +364,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void failureIfNotFoundInConsole() throws Exception {
+    void failureIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         TextFinder textFinder = new TextFinder(TestUtils.UNIQUE_TEXT);
         textFinder.setAlsoCheckConsoleOutput(true);
@@ -382,7 +380,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void multipleTextFindersInConsole() throws Exception {
+    void multipleTextFindersInConsole(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         project.getBuildersList().add(new TestEchoBuilder(TestUtils.UNIQUE_TEXT));
         TextFinder tf1 = new TextFinder(TestUtils.UNIQUE_TEXT);
@@ -407,7 +405,7 @@ public class TextFinderPublisherFreestyleTest {
     }
 
     @Test
-    public void createTextFinderViaWebClient() throws Exception {
+    void createTextFinderViaWebClient(JenkinsRule rule) throws Exception {
         FreeStyleProject project = rule.createFreeStyleProject();
         assertEquals(0, project.getPublishersList().size());
 
