@@ -6,12 +6,10 @@
          xmlns:t="/lib/hudson"
          xmlns:f="/lib/form">
 
-  <!-- ✅ Your new field -->
   <f:entry title="Display Name" field="displayName">
     <f:textbox />
   </f:entry>
 
-  <!-- ✅ Existing block (DO NOT MODIFY STRUCTURE) -->
   <f:entry title="Text Finders">
     <f:repeatableProperty field="textFinders" minimum="1">
       <f:block>
