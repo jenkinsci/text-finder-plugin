@@ -293,7 +293,8 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                         + textFinder.getFileSet()
                         + "'...");
                 RemoteOutputStream ros = new RemoteOutputStream(logger);
-                foundText |= workspace.act(new FileChecker(ros, textFinder.getFileSet(), textFinder.getRegexp()));
+                foundText |= workspace.act(new FileChecker(
+                        ros, textFinder.getFileSet(), textFinder.getRegexp(), textFinder.getExcludes()));
                 logger.println("[Text Finder] Finished searching for pattern '"
                         + textFinder.getRegexp()
                         + "' in file set '"
@@ -429,11 +430,13 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         private final RemoteOutputStream ros;
         private final String fileSet;
         private final String regexp;
+        private final String excludes;
 
-        public FileChecker(RemoteOutputStream ros, String fileSet, String regexp) {
+        public FileChecker(RemoteOutputStream ros, String fileSet, String regexp, String excludes) {
             this.ros = ros;
             this.fileSet = fileSet;
             this.regexp = regexp;
+            this.excludes = excludes;
         }
 
         @Override
@@ -447,6 +450,9 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
             fs.setProject(p);
             fs.setDir(ws);
             fs.setIncludes(fileSet);
+            if (excludes != null && !excludes.trim().isEmpty()) {
+                fs.setExcludes(excludes);
+            }
             DirectoryScanner ds = fs.getDirectoryScanner(p);
 
             // Any files in the final set?

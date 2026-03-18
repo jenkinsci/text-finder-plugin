@@ -6,6 +6,9 @@
   <f:entry field="fileSet" title="${%Files}">
     <f:textbox/>
   </f:entry>
+  <f:entry title="Exclude Files" field="excludes">
+    <f:textbox />
+  </f:entry>
   <f:entry field="alsoCheckConsoleOutput">
     <f:checkbox title="${%Also search the console output}"/>
   </f:entry>
