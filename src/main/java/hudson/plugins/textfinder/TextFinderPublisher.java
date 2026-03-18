@@ -92,8 +92,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @Restricted(DoNotUse.class)
     public transient String buildResult;
 
-    private String displayName = "";
-
     @DataBoundConstructor
     public TextFinderPublisher() {
         textFinders = new ArrayList<>();
@@ -129,15 +127,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
     @DataBoundSetter
     public void setTextFinders(List<TextFinder> textFinders) {
         this.textFinders = textFinders != null ? new ArrayList<>(textFinders) : new ArrayList<>();
-    }
-
-    public String getDisplayName() {
-        return displayName != null ? displayName : "";
-    }
-
-    @DataBoundSetter
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     @DataBoundSetter
@@ -216,9 +205,6 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
      */
     protected Object readResolve() {
         if (regexp != null) {
-            if (displayName == null) {
-                displayName = "";
-            }
             setTextFinders(Collections.singletonList(new TextFinder(regexp)));
             regexp = null;
         }
@@ -431,6 +417,10 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         private final String fileSet;
         private final String regexp;
         private final String excludes;
+
+        public FileChecker(RemoteOutputStream ros, String fileSet, String regexp) {
+            this(ros, fileSet, regexp, null);
+        }
 
         public FileChecker(RemoteOutputStream ros, String fileSet, String regexp, String excludes) {
             this.ros = ros;

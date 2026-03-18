@@ -29,7 +29,6 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
     @CheckForNull
     private String fileSet;
 
-    @CheckForNull
     private String excludes;
 
     @NonNull
@@ -66,15 +65,13 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
         this.fileSet = fileSet != null ? Util.fixEmpty(fileSet.trim()) : null;
     }
 
-    @Restricted(NoExternalUse.class)
     public String getExcludes() {
         return excludes;
     }
 
     @DataBoundSetter
-    @Restricted(NoExternalUse.class)
     public void setExcludes(String excludes) {
-        this.excludes = excludes != null ? Util.fixEmpty(excludes.trim()) : null;
+        this.excludes = excludes;
     }
 
     @Restricted(NoExternalUse.class)
