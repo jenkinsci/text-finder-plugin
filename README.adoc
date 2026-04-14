@@ -10,7 +10,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/[image:https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/badge/icon[Build Status]]
+https://ci.jenkins.io/job/Plugins/job/text-finder-plugin/job/master/[image:https://ci.jenkins.io/buildStatus/icon?job=Plugins%2Ftext-finder-plugin%2Fmaster[Build Status]]
 https://github.com/jenkinsci/text-finder-plugin/graphs/contributors[image:https://img.shields.io/github/contributors/jenkinsci/text-finder-plugin.svg[Contributors]]
 https://plugins.jenkins.io/text-finder[image:https://img.shields.io/jenkins/plugin/v/text-finder.svg[Jenkins Plugin]]
 https://github.com/jenkinsci/text-finder-plugin/releases/latest[image:https://img.shields.io/github/release/jenkinsci/text-finder-plugin.svg?label=changelog[GitHub release]]
