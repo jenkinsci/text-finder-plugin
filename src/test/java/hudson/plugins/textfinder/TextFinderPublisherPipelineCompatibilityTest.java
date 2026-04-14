@@ -5,17 +5,15 @@ import java.io.File;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class TextFinderPublisherPipelineCompatibilityTest {
-
-    @Rule
-    public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class TextFinderPublisherPipelineCompatibilityTest {
 
     @Test
-    public void successIfFoundInFile() throws Exception {
+    void successIfFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -51,7 +49,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void failureIfFoundInFile() throws Exception {
+    void failureIfFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -88,7 +86,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void unstableIfFoundInFile() throws Exception {
+    void unstableIfFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -125,7 +123,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void notBuiltIfFoundInFile() throws Exception {
+    void notBuiltIfFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -162,7 +160,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void successIfNotFoundInFile() throws Exception {
+    void successIfNotFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -194,7 +192,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void failureIfNotFoundInFile() throws Exception {
+    void failureIfNotFoundInFile(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -227,7 +225,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void successIfFoundInConsole() throws Exception {
+    void successIfFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "  testEcho '"
@@ -247,7 +245,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void failureIfFoundInConsole() throws Exception {
+    void failureIfFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "  testEcho '"
@@ -268,7 +266,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void unstableIfFoundInConsole() throws Exception {
+    void unstableIfFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "  testEcho '"
@@ -289,7 +287,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void notBuiltIfFoundInConsole() throws Exception {
+    void notBuiltIfFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "  testEcho '"
@@ -310,7 +308,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void successIfNotFoundInConsole() throws Exception {
+    void successIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
@@ -326,7 +324,7 @@ public class TextFinderPublisherPipelineCompatibilityTest {
     }
 
     @Test
-    public void failureIfNotFoundInConsole() throws Exception {
+    void failureIfNotFoundInConsole(JenkinsRule rule) throws Exception {
         WorkflowJob project = rule.createProject(WorkflowJob.class);
         project.setDefinition(new CpsFlowDefinition(
                 "node {\n"
