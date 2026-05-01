@@ -445,4 +445,28 @@ class TextFinderPublisherFreestyleTest {
         assertEquals(Result.UNSTABLE.toString(), textFinder.getBuildResult());
         assertTrue(textFinder.isAlsoCheckConsoleOutput());
     }
+
+    @Test
+    public void shouldExcludeFiles() throws Exception {
+        FreeStyleProject project = rule.createFreeStyleProject();
+
+        // create files
+        hudson.FilePath ws = rule.jenkins.getWorkspaceFor(project);
+        ws.child("include.env").write("safe-text", "UTF-8");
+        ws.child("exclude.env").write("forbidden-text", "UTF-8");
+
+        TextFinder finder = new TextFinder("forbidden-text");
+        finder.setFileSet("**/*.env");
+        finder.setExcludes("**/exclude.env");
+
+        TextFinderPublisher publisher = new TextFinderPublisher();
+        publisher.setTextFinders(Collections.singletonList(finder));
+
+        project.getPublishersList().add(publisher);
+
+        FreeStyleBuild build = rule.buildAndAssertSuccess(project);
+
+        // should still be SUCCESS because excluded file is ignored
+        rule.assertBuildStatus(Result.SUCCESS, build);
+    }
 }
