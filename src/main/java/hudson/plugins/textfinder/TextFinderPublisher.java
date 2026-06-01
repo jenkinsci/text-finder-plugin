@@ -187,6 +187,13 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
         getFirst().setAlsoCheckConsoleOutput(alsoCheckConsoleOutput);
     }
 
+    @DataBoundSetter
+    @Deprecated
+    @Restricted(NoExternalUse.class)
+    public void setAllowForced(boolean alsoCheckConsoleOutput) {
+        getFirst().setAllowForced(alsoCheckConsoleOutput);
+    }
+
     private TextFinder getFirst() {
         if (textFinders.isEmpty()) {
             // This is gross, but fortunately it is only used in a deprecated code path.
@@ -287,7 +294,7 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                         + "'.");
             }
 
-            Result result = Result.SUCCESS;
+            Result result = null;
             switch (textFinder.getChangeCondition()) {
                 case MATCH_FOUND:
                     if (foundText) {
@@ -303,9 +310,15 @@ public class TextFinderPublisher extends Recorder implements Serializable, Simpl
                     throw new IllegalStateException("Unexpected value: " + textFinder.getChangeCondition());
             }
 
-            if (!result.equals(Result.SUCCESS)) {
-                logger.println("[Text Finder] Setting build result to '" + result + "'.");
-                run.setResult(result);
+            if (result != null) {
+                Result currentResult = run.getResult();
+                if (textFinder.isAllowForced() && currentResult != null && result.isBetterThan(currentResult)) {
+                    logger.println("[Text Finder] Forcing build result to '" + result + "'.");
+                    ForceResultUtils.changeField(run, "result", result, listener);
+                } else {
+                    logger.println("[Text Finder] Setting build result to '" + result + "'.");
+                    run.setResult(result);
+                }
             }
         } catch (AbortException e) {
             // no test file found
