@@ -1,6 +1,7 @@
 package hudson.plugins.textfinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.model.FreeStyleBuild;
@@ -8,12 +9,12 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.textfinder.test.TestEchoBuilder;
 import hudson.plugins.textfinder.test.TestWriteFileBuilder;
-import hudson.util.VersionNumber;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
-import jenkins.model.Jenkins;
 import org.htmlunit.WebClientUtil;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
@@ -415,15 +416,20 @@ class TextFinderPublisherFreestyleTest {
 
         // Add a Text Finder.
         HtmlForm config = page.getFormByName("config");
-        rule.getButtonByCaption(config, "Add post-build action").click();
-        if (Jenkins.getVersion().isOlderThan(new VersionNumber("2.422"))) {
-            page.getAnchorByText(Messages.TextFinderPublisher_DisplayName()).click();
-        } else {
-            rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName())
-                    .click();
+        HtmlButton button = null;
+        for (HtmlElement b : config.getElementsByTagName("button")) {
+            if (b.getTextContent().trim().equals("Add post-build action")) {
+                if (b.isDisplayed()) {
+                    button = (HtmlButton) b;
+                }
+            }
         }
+        assertNotNull(button);
+        button.click();
+        rule.getButtonByCaption(config, Messages.TextFinderPublisher_DisplayName())
+                .click();
 
-        // Wait for the YUI JavaScript to load.
+        // Wait for the JavaScript to load.
         WebClientUtil.waitForJSExec(page.getWebClient());
 
         // Configure the Text Finder.
