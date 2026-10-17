@@ -9,6 +9,9 @@
   <f:entry field="alsoCheckConsoleOutput">
     <f:checkbox title="${%Also search the console output}"/>
   </f:entry>
+  <f:entry field="allowForced">
+    <f:checkbox title="${%Allow result improving}"/>
+  </f:entry>
   <f:entry field="buildResult" title="${%Build result}">
     <f:select default="FAILURE"/>
   </f:entry>
