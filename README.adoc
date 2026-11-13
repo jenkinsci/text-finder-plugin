@@ -67,6 +67,7 @@ findText(textFinders: [textFinder([...], buildResult: 'UNSTABLE')])
 If a match is found, the build result will be set to this value.
 
 NOTE: The build result can only get worse, so you cannot change the result to `SUCCESS` if the current result is `UNSTABLE` or worse.
+NOTE: If you select 'Allow result improving', you will be able to improve result to better. Despite being stable for years, it is fragile implementation, and we recommend to use it with caution, only as last resort.
 
 Whether or not a build is downgraded depends on its change condition.
 The default change condition is `MATCH_FOUND`, which downgrades the build result if a match is found.

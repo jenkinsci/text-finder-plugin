@@ -34,6 +34,7 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
 
     private TextFinderChangeCondition changeCondition = TextFinderChangeCondition.MATCH_FOUND;
     private boolean alsoCheckConsoleOutput;
+    private boolean allowForced;
 
     @Restricted(NoExternalUse.class)
     public String getRegexp() {
@@ -105,6 +106,17 @@ public class TextFinder extends AbstractDescribableImpl<TextFinder> implements S
     @Restricted(NoExternalUse.class)
     public void setAlsoCheckConsoleOutput(boolean alsoCheckConsoleOutput) {
         this.alsoCheckConsoleOutput = alsoCheckConsoleOutput;
+    }
+
+    @Restricted(NoExternalUse.class)
+    public boolean isAllowForced() {
+        return allowForced;
+    }
+
+    @DataBoundSetter
+    @Restricted(NoExternalUse.class)
+    public void setAllowForced(boolean allowForced) {
+        this.allowForced = allowForced;
     }
 
     /**
